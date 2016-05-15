@@ -1,8 +1,8 @@
 import {
   ARRAY_INSERT, ARRAY_POP, ARRAY_PUSH, ARRAY_REMOVE, ARRAY_SHIFT, ARRAY_SPLICE, ARRAY_SWAP,
   ARRAY_UNSHIFT, BLUR, CHANGE, DESTROY, FOCUS,
-  INITIALIZE, RESET, SET_SUBMIT_FAILED, START_ASYNC_VALIDATION, START_SUBMIT,
-  STOP_ASYNC_VALIDATION, STOP_SUBMIT, TOUCH, UNTOUCH
+  INITIALIZE, REGISTER_FIELD, RESET, SET_SUBMIT_FAILED, START_ASYNC_VALIDATION,
+  START_SUBMIT, STOP_ASYNC_VALIDATION, STOP_SUBMIT, TOUCH, UNREGISTER_FIELD, UNTOUCH
 } from './actionTypes'
 import createDeleteInWithCleanUp from './deleteInWithCleanUp'
 
@@ -15,13 +15,14 @@ const createReducer = structure => {
       setIn(state, `${key}.${field}`, splice(existing, index, removeNum, value)) :
       state
   }
-  const rootKeys = [ 'values', 'fields', 'submitErrors', 'asyncErrors' ]
+  const rootKeys = [ 'values', 'fields', 'submitErrors', 'asyncErrors', 'syncErrors' ]
   const arraySplice = (state, field, index, removeNum, value) => {
     let result = state
     result = doSplice(result, 'values', field, index, removeNum, value, true)
     result = doSplice(result, 'fields', field, index, removeNum, empty)
     result = doSplice(result, 'submitErrors', field, index, removeNum, empty)
     result = doSplice(result, 'asyncErrors', field, index, removeNum, empty)
+    result = doSplice(result, 'syncErrors', field, index, removeNum, empty)
     return result
   }
 
@@ -111,6 +112,11 @@ const createReducer = structure => {
       result = setIn(result, 'initial', mapData)
       return result
     },
+    [REGISTER_FIELD](state, { payload }) {
+      let result = state
+      result.fieldList = [ ...result.fieldList, payload ]
+      return result
+    },
     [RESET](state) {
       const values = getIn(state, 'initial')
       let result = empty
@@ -182,6 +188,17 @@ const createReducer = structure => {
       let result = state
       fields.forEach(field => result = setIn(result, `fields.${field}.touched`, true))
       result = setIn(result, 'anyTouched', true)
+      return result
+    },
+    [UNREGISTER_FIELD](state, { payload }) {
+      let result = state
+      const fieldList = [ ...state.fieldList ]
+      const fieldIndex = fieldList.indexOf(payload)
+      if (fieldIndex < 0) {
+        return state
+      }
+      fieldList.splice(fieldIndex, 1)
+      result.fieldList = fieldList
       return result
     },
     [UNTOUCH](state, { meta: { fields } }) {

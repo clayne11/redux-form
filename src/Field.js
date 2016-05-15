@@ -35,7 +35,7 @@ const createField = ({ deepEqual, getIn }) => {
     }
 
     componentWillUnmount() {
-      this.context._reduxForm.unregister(this.key)
+      this.context._reduxForm.unregister(this.key, this)
     }
 
     get valid() {

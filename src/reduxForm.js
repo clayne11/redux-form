@@ -1,4 +1,4 @@
-import React, { Component, PropTypes } from 'react'
+import { Component, PropTypes, createElement } from 'react'
 import hoistStatics from 'hoist-non-react-statics'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
@@ -27,8 +27,21 @@ const {
   blur,
   change,
   focus,
+  registerField,
+  unregisterField,
   ...formActions
 } = importedActions
+
+const arrayActions = {
+  arrayInsert,
+  arrayPop,
+  arrayPush,
+  arrayRemove,
+  arrayShift,
+  arraySplice,
+  arraySwap,
+  arrayUnshift
+}
 
 const propsToNotUpdateFor = [
   ...Object.keys(importedActions),
@@ -121,7 +134,7 @@ const createReduxForm =
               destroy()
             }
           }
-          
+
           getSyncErrors() {
             return this.props.syncErrors
           }
@@ -140,10 +153,12 @@ const createReduxForm =
 
           register(key, field) {
             this.fields[ key ] = field
+            this.props.registerField(field.name)
           }
 
-          unregister(key) {
+          unregister(key, field) {
             delete this.fields[ key ]
+            this.props.unregisterField(field.name)
           }
 
           get fieldList() {
@@ -245,13 +260,10 @@ const createReduxForm =
               values,
               ...passableProps
             } = this.props // eslint-disable-line no-redeclare
-            return (
-              <WrappedComponent
-                {...passableProps}
-                {...{
-                  handleSubmit: this.submit
-                }}/>
-            )
+            return createElement(WrappedComponent, {
+              ...passableProps,
+              handleSubmit: this.submit
+            })
           }
         }
         Form.displayName = `Form(${getDisplayName(WrappedComponent)})`
@@ -304,35 +316,45 @@ const createReduxForm =
               valid
             }
           },
-          (dispatch, ownProps) =>
-            ({
-              ...bindActionCreators(mapValues({ ...formActions },
-                actionCreator => partial(actionCreator, ownProps.form)), dispatch),
-              array: bindActionCreators(mapValues({
-                insert: arrayInsert,
-                pop: arrayPop,
-                push: arrayPush,
-                remove: arrayRemove,
-                shift: arrayShift,
-                splice: arraySplice,
-                swap: arraySwap,
-                unshift: arrayUnshift
-              }, actionCreator => partial(actionCreator, ownProps.form)), dispatch),
-              ...mapValues({
-                arrayInsert,
-                arrayPop,
-                arrayPush,
-                arrayRemove,
-                arrayShift,
-                arraySplice,
-                arraySwap,
-                arrayUnshift,
-                blur: partialRight(blur, !!ownProps.touchOnBlur),
-                change: partialRight(change, !!ownProps.touchOnChange),
-                focus
-              }, actionCreator => partial(actionCreator, ownProps.form)),
+          (dispatch, initialProps) => {
+            const bindForm = actionCreator => partial(actionCreator, initialProps.form)
+
+            // Bind the first parameter on `props.form`
+            const boundFormACs = mapValues(formActions, bindForm)
+            const boundArrayACs = mapValues(arrayActions, bindForm)
+            const boundBlur = partialRight(bindForm(blur), !!initialProps.touchOnBlur)
+            const boundChange = partialRight(bindForm(change), !!initialProps.touchOnChange)
+            const boundFocus = bindForm(focus)
+            const boundRegisterField = bindForm(registerField)
+            const boundUnregisterField = bindForm(unregisterField)
+
+            // Wrap action creators with `dispatch`
+            const connectedFormACs = bindActionCreators(boundFormACs, dispatch)
+            const connectedArrayACs = {
+              insert: bindActionCreators(boundArrayACs.arrayInsert, dispatch),
+              pop: bindActionCreators(boundArrayACs.arrayPop, dispatch),
+              push: bindActionCreators(boundArrayACs.arrayPush, dispatch),
+              remove: bindActionCreators(boundArrayACs.arrayRemove, dispatch),
+              shift: bindActionCreators(boundArrayACs.arrayShift, dispatch),
+              splice: bindActionCreators(boundArrayACs.arraySplice, dispatch),
+              swap: bindActionCreators(boundArrayACs.arraySwap, dispatch),
+              unshift: bindActionCreators(boundArrayACs.arrayUnshift, dispatch)
+            }
+
+            const computedActions = {
+              ...connectedFormACs,
+              ...boundArrayACs,
+              blur: boundBlur,
+              change: boundChange,
+              array: connectedArrayACs,
+              focus: boundFocus,
+              registerField: boundRegisterField,
+              unregisterField: boundUnregisterField,
               dispatch
-            }),
+            }
+
+            return () => computedActions
+          },
           undefined,
           { withRef: true }
         )
@@ -367,8 +389,12 @@ const createReduxForm =
 
           render() {
             const { initialValues, ...rest } = this.props
-            // convert initialValues if need to
-            return <ConnectedForm ref="wrapped" initialValues={fromJS(initialValues)} {...rest}/>
+            return createElement(ConnectedForm, {
+              ...rest,
+              ref: 'wrapped',
+              // convert initialValues if need to
+              initialValues: fromJS(initialValues)
+            })
           }
         }
       }
