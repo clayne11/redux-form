@@ -60,7 +60,7 @@ export const initialize = (form, values) =>
   ({ type: INITIALIZE, meta: { form }, payload: values })
 
 export const registerField = (form, name) =>
-  ({ type: REGISTER_FIELD, meta: { form }, payload: name })
+  ({ type: REGISTER_FIELD, meta: { form }, payload: { name } })
 
 export const reset = form =>
   ({ type: RESET, meta: { form } })
@@ -102,7 +102,7 @@ export const touch = (form, ...fields) =>
   ({ type: TOUCH, meta: { form, fields } })
 
 export const unregisterField = (form, name) =>
-  ({ type: UNREGISTER_FIELD, meta: { form }, payload: name })
+  ({ type: UNREGISTER_FIELD, meta: { form }, payload: { name } })
 
 export const untouch = (form, ...fields) =>
   ({ type: UNTOUCH, meta: { form, fields } })

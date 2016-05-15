@@ -27,8 +27,6 @@ const {
   blur,
   change,
   focus,
-  registerField,
-  unregisterField,
   ...formActions
 } = importedActions
 
@@ -258,6 +256,8 @@ const createReduxForm =
               touchOnChange,
               syncErrors,
               values,
+              registerField,
+              unregisterField,
               ...passableProps
             } = this.props // eslint-disable-line no-redeclare
             return createElement(WrappedComponent, {
@@ -325,8 +325,6 @@ const createReduxForm =
             const boundBlur = partialRight(bindForm(blur), !!initialProps.touchOnBlur)
             const boundChange = partialRight(bindForm(change), !!initialProps.touchOnChange)
             const boundFocus = bindForm(focus)
-            const boundRegisterField = bindForm(registerField)
-            const boundUnregisterField = bindForm(unregisterField)
 
             // Wrap action creators with `dispatch`
             const connectedFormACs = bindActionCreators(boundFormACs, dispatch)
@@ -348,8 +346,6 @@ const createReduxForm =
               change: boundChange,
               array: connectedArrayACs,
               focus: boundFocus,
-              registerField: boundRegisterField,
-              unregisterField: boundUnregisterField,
               dispatch
             }
 

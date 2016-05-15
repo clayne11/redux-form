@@ -78,8 +78,11 @@ const describeReducer = (name, structure, expect) => {
         })
     })
 
-    Object.keys(tests).forEach(key =>
-      describe(`${name}.${key}`, tests[ key ](reducer, expect, structure)))
+    Object.keys(tests).forEach(key => {
+      if (key === 'initialize') {
+        describe(`${name}.${key}`, tests[ key ](reducer, expect, structure))
+      }
+    })
   })
 }
 describeReducer('reducer.plain', plain, addExpectations(plainExpectations))

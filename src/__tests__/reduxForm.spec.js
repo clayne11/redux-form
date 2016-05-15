@@ -259,7 +259,12 @@ const describeReduxForm = (name, structure, combineReducers, expect) => {
         form: {
           testForm: {
             initial: initialValues,
-            values: initialValues
+            values: initialValues,
+            registeredFields: {
+              deep: {
+                foo: {}
+              }
+            }
           }
         }
       })
@@ -405,7 +410,15 @@ const describeReduxForm = (name, structure, combineReducers, expect) => {
 
       const dom = TestUtils.renderIntoDocument(<Container/>)
       expect(store.getState()).toEqualMap({
-        form: {}
+        form: {
+          testForm: {
+            registeredFields: {
+              deep: {
+                foo: {}
+              }
+            }
+          }
+        }
       }, 'Form data in Redux did not get destroyed')
       expect(formRender).toHaveBeenCalled()
       expect(formRender.calls.length).toBe(1)
@@ -431,6 +444,11 @@ const describeReduxForm = (name, structure, combineReducers, expect) => {
             values: {
               deep: {
                 foo: 'bob'
+              }
+            },
+            registeredFields: {
+              deep: {
+                foo: {}
               }
             }
           }

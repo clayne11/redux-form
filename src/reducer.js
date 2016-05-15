@@ -15,14 +15,13 @@ const createReducer = structure => {
       setIn(state, `${key}.${field}`, splice(existing, index, removeNum, value)) :
       state
   }
-  const rootKeys = [ 'values', 'fields', 'submitErrors', 'asyncErrors', 'syncErrors' ]
+  const rootKeys = [ 'values', 'fields', 'submitErrors', 'asyncErrors' ]
   const arraySplice = (state, field, index, removeNum, value) => {
     let result = state
     result = doSplice(result, 'values', field, index, removeNum, value, true)
     result = doSplice(result, 'fields', field, index, removeNum, empty)
     result = doSplice(result, 'submitErrors', field, index, removeNum, empty)
     result = doSplice(result, 'asyncErrors', field, index, removeNum, empty)
-    result = doSplice(result, 'syncErrors', field, index, removeNum, empty)
     return result
   }
 
@@ -112,9 +111,9 @@ const createReducer = structure => {
       result = setIn(result, 'initial', mapData)
       return result
     },
-    [REGISTER_FIELD](state, { payload }) {
+    [REGISTER_FIELD](state, { payload: { name } }) {
       let result = state
-      result.fieldList = [ ...result.fieldList, payload ]
+      result = setIn(result, `registeredFields.${name}`, empty)
       return result
     },
     [RESET](state) {
@@ -190,15 +189,9 @@ const createReducer = structure => {
       result = setIn(result, 'anyTouched', true)
       return result
     },
-    [UNREGISTER_FIELD](state, { payload }) {
+    [UNREGISTER_FIELD](state, { payload: { name } }) {
       let result = state
-      const fieldList = [ ...state.fieldList ]
-      const fieldIndex = fieldList.indexOf(payload)
-      if (fieldIndex < 0) {
-        return state
-      }
-      fieldList.splice(fieldIndex, 1)
-      result.fieldList = fieldList
+      result = deleteIn(result, `registeredFields.${name}`)
       return result
     },
     [UNTOUCH](state, { meta: { fields } }) {
