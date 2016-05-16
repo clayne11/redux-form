@@ -131,6 +131,7 @@ const createReduxForm =
           componentWillUnmount() {
             const { destroyOnUnmount, destroy } = this.props
             if (destroyOnUnmount) {
+              this.destroyed = true
               destroy()
             }
           }
@@ -156,7 +157,9 @@ const createReduxForm =
           }
 
           unregister(key, field) {
-            this.props.unregisterField(field.name)
+            if (!this.destroyed) {
+              this.props.unregisterField(field.name)
+            }
           }
 
           get fieldList() {

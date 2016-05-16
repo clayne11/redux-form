@@ -83,9 +83,7 @@ const describeReducer = (name, structure, expect) => {
     })
 
     Object.keys(tests).forEach(key => {
-      if (key === 'registerField') {
-        describe.only(`${name}.${key}`, tests[ key ](reducer, expect, structure))
-      }
+      describe(`${name}.${key}`, tests[ key ](reducer, expect, structure))
     })
   })
 }
