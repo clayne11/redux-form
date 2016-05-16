@@ -115,7 +115,7 @@ const createReducer = structure => {
       const mapData = fromJS({ name, type })
       let result = state
       const registeredFields = getIn(result, 'registeredFields')
-      result = setIn(state, 'registeredFields', splice(registeredFields, size(registeredFields) - 1, 0, mapData))
+      result = setIn(state, 'registeredFields', splice(registeredFields, size(registeredFields), 0, mapData))
       return result
     },
     [RESET](state) {

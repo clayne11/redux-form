@@ -614,13 +614,13 @@ const describeReduxForm = (name, structure, combineReducers, expect) => {
       )
 
       const stub = TestUtils.findRenderedComponentWithType(dom, Decorated)
-      expect(stub.fieldList).toEqual([ 'foo', 'fooArray' ])
+      expect(stub.fieldList).toEqual(fromJS([ 'foo', 'fooArray' ]))
 
       // switch fields
       const button = TestUtils.findRenderedDOMComponentWithTag(dom, 'button')
       TestUtils.Simulate.click(button)
 
-      expect(stub.fieldList).toEqual([ 'bar', 'barArray' ])
+      expect(stub.fieldList).toEqual(fromJS([ 'bar', 'barArray' ]))
     })
 
     it('should provide valid/invalid/values getters', () => {

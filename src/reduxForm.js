@@ -2,7 +2,7 @@ import { Component, PropTypes, createElement } from 'react'
 import hoistStatics from 'hoist-non-react-statics'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { every, mapValues, partial, partialRight } from 'lodash'
+import { mapValues, partial, partialRight } from 'lodash'
 import isPromise from 'is-promise'
 import getDisplayName from './util/getDisplayName'
 import * as importedActions from './actions'
@@ -49,7 +49,8 @@ const propsToNotUpdateFor = [
   'initialized',
   'initialValues',
   'syncErrors',
-  'values'
+  'values',
+  'registeredFields'
 ]
 
 const checkSubmit = submit => {
@@ -88,7 +89,6 @@ const createReduxForm =
             this.register = this.register.bind(this)
             this.unregister = this.unregister.bind(this)
             this.submitCompleted = this.submitCompleted.bind(this)
-            this.fields = {}
           }
 
           getChildContext() {
@@ -144,7 +144,7 @@ const createReduxForm =
           }
 
           get valid() {
-            return every(this.fields, field => field.valid)
+            return this.props.valid
           }
 
           get invalid() {
@@ -152,17 +152,15 @@ const createReduxForm =
           }
 
           register(key, field, type) {
-            this.fields[ key ] = field
             this.props.registerField(field.name, type)
           }
 
           unregister(key, field) {
-            delete this.fields[ key ]
             this.props.unregisterField(field.name)
           }
 
           get fieldList() {
-            return Object.keys(this.fields).map(key => this.fields[ key ].name)
+            return this.props.registeredFields.map((field) => getIn(field, 'name'))
           }
 
           asyncValidate(name, value) {
@@ -280,7 +278,8 @@ const createReduxForm =
           getFormState: PropTypes.func,
           validate: PropTypes.func,
           touchOnBlur: PropTypes.bool,
-          touchOnChange: PropTypes.bool
+          touchOnChange: PropTypes.bool,
+          registeredFields: PropTypes.any
         }
 
         const connector = connect(
@@ -320,7 +319,8 @@ const createReduxForm =
               submitFailed,
               syncErrors,
               values,
-              valid
+              valid,
+              registeredFields: getIn(formState, 'registeredFields')
             }
           },
           (dispatch, initialProps) => {
