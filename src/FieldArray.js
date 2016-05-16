@@ -3,9 +3,6 @@ import invariant from 'invariant'
 import createConnectedFieldArray from './ConnectedFieldArray'
 import shallowCompare from 'react-addons-shallow-compare'
 
-let keys = 0
-const generateKey = () => `redux-form-field-array-${keys++}`
-
 const createFieldArray = ({ deepEqual, getIn, size }) => {
 
   class FieldArray extends Component {
@@ -14,7 +11,6 @@ const createFieldArray = ({ deepEqual, getIn, size }) => {
       if (!context._reduxForm) {
         throw new Error('FieldArray must be inside a component decorated with reduxForm()')
       }
-      this.key = generateKey()
       this.ConnectedFieldArray = createConnectedFieldArray(context._reduxForm, { deepEqual, getIn, size }, props.name)
     }
 
@@ -23,7 +19,7 @@ const createFieldArray = ({ deepEqual, getIn, size }) => {
     }
 
     componentWillMount() {
-      this.context._reduxForm.register(this.key, this.name, 'FieldArray')
+      this.context._reduxForm.register(this.name, 'FieldArray')
     }
 
     componentWillReceiveProps(nextProps) {
@@ -35,7 +31,7 @@ const createFieldArray = ({ deepEqual, getIn, size }) => {
     }
 
     componentWillUnmount() {
-      this.context._reduxForm.unregister(this.key, this.name)
+      this.context._reduxForm.unregister(this.name)
     }
 
     get name() {

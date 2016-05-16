@@ -5,7 +5,7 @@ import immutable from '../structure/immutable'
 import immutableExpectations from '../structure/immutable/expectations'
 import addExpectations from './addExpectations'
 
-const describeHasErrors = (name, structure, expect) => {
+const describeHasError = (name, structure, expect) => {
   const { fromJS, getIn } = structure
   const hasError = createHasError(structure)
 
@@ -113,5 +113,5 @@ const describeHasErrors = (name, structure, expect) => {
   })
 }
 
-describeHasErrors('hasError.plain', plain, addExpectations(plainExpectations))
-describeHasErrors('hasError.immutable', immutable, addExpectations(immutableExpectations))
+describeHasError('hasError.plain', plain, addExpectations(plainExpectations))
+describeHasError('hasError.immutable', immutable, addExpectations(immutableExpectations))

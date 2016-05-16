@@ -152,11 +152,11 @@ const createReduxForm =
             return !this.valid
           }
 
-          register(key, name, type) {
+          register(name, type) {
             this.props.registerField(name, type)
           }
 
-          unregister(key, name) {
+          unregister(name) {
             if (!this.destroyed) {
               this.props.unregisterField(name)
             }
