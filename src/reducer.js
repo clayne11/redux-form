@@ -206,7 +206,7 @@ const createReducer = structure => {
       const fieldIndex = registeredFields.findIndex((value) => {
         return getIn(value, 'name') === name
       })
-      if (size(registeredFields) === 1 && fieldIndex >= 0) {
+      if (size(registeredFields) <= 1 && fieldIndex >= 0) {
         return deleteInWithCleanUp(state, 'registeredFields')
       }
       return setIn(state, 'registeredFields', splice(registeredFields, fieldIndex, 1))
@@ -232,7 +232,7 @@ const createReducer = structure => {
       if (action.type === DESTROY) {
         return deleteInWithCleanUp(state, action.meta.form)
       }
-      const formState = getIn(state, form) 
+      const formState = getIn(state, form)
       const result = reducer(formState, action)
       return result === formState ? state : setIn(state, form, result)
     }

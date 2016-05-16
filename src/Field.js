@@ -23,7 +23,7 @@ const createField = ({ deepEqual, getIn }) => {
     }
 
     componentWillMount() {
-      this.context._reduxForm.register(this.key, this, 'Field')
+      this.context._reduxForm.register(this.key, this.name, 'Field')
     }
 
     componentWillReceiveProps(nextProps) {
@@ -35,11 +35,7 @@ const createField = ({ deepEqual, getIn }) => {
     }
 
     componentWillUnmount() {
-      this.context._reduxForm.unregister(this.key, this)
-    }
-
-    get valid() {
-      return this.refs.connected.getWrappedInstance().valid
+      this.context._reduxForm.unregister(this.key, this.name)
     }
 
     getRenderedComponent() {

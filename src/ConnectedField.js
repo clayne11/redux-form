@@ -23,14 +23,6 @@ const createConnectedField = ({
       return plain.getIn(getSyncErrors(), name)
     }
 
-    get valid() {
-      const { asyncError, submitError } = this.props
-
-      const error = this.syncError || asyncError || submitError
-
-      return !error
-    }
-
     getRenderedComponent() {
       return this.refs.renderedComponent
     }
