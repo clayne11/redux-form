@@ -1,4 +1,4 @@
-import plainGetIn from '../structure/plain/getIn'
+import plainGetIn from './structure/plain/getIn'
 
 const getErrorKey = (name, type) => {
   switch (type) {
@@ -10,7 +10,9 @@ const getErrorKey = (name, type) => {
 }
 
 const createHasError = ({ getIn }) => {
-  const hasError = (name, type, syncErrors, asyncErrors, submitErrors) => {
+  const hasError = (field, syncErrors, asyncErrors, submitErrors) => {
+    const name = getIn(field, 'name')
+    const type = getIn(field, 'type')
     if (!syncErrors && !asyncErrors && !submitErrors) {
       return false
     }

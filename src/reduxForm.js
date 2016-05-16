@@ -11,6 +11,7 @@ import silenceEvent from './events/silenceEvent'
 import silenceEvents from './events/silenceEvents'
 import asyncValidation from './asyncValidation'
 import createHasErrors from './hasErrors'
+import createHasError from './hasError'
 import defaultShouldAsyncValidate from './defaultShouldAsyncValidate'
 import plain from './structure/plain'
 
@@ -65,6 +66,7 @@ const createReduxForm =
   structure => {
     const { deepEqual, empty, getIn, setIn, fromJS, some } = structure
     const hasErrors = createHasErrors(structure)
+    const hasError = createHasError(structure)
     const plainHasErrors = createHasErrors(plain)
     return initialConfig => {
       const config = {
@@ -295,11 +297,12 @@ const createReduxForm =
             const hasSyncErrors = plainHasErrors(syncErrors)
             const hasAsyncErrors = hasErrors(asyncErrors)
             const hasSubmitErrors = hasErrors(submitErrors)
-            // const valid = some(formState.registeredFields, ((value) => {
-            //   console.log('value')
-            //   console.log(value)
-            // }))
-            const valid = !(hasSyncErrors || hasAsyncErrors || hasSubmitErrors)
+            const valid = (
+              !hasSyncErrors && !hasAsyncErrors && !hasSubmitErrors &&
+              !some(getIn(formState, 'registeredFields'), ((field) => {
+                return hasError(field, syncErrors, asyncErrors, submitErrors)
+              }))
+            )
             const anyTouched = !!getIn(formState, 'anyTouched')
             const submitting = !!getIn(formState, 'submitting')
             const submitFailed = !!getIn(formState, 'submitFailed')
