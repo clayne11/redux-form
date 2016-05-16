@@ -25,6 +25,8 @@ import describeStopSubmit from './reducer.stopSubmit.spec'
 import describeSetSubmitFailed from './reducer.setSubmitFailed.spec'
 import describeStartAsyncValidation from './reducer.startAsyncValidation.spec'
 import describeStopAsyncValidation from './reducer.stopAsyncValidation.spec'
+import describeRegisterField from './reducer.registerField.spec'
+import describeUnregisterField from './reducer.unregisterField.spec'
 
 const tests = {
   initialize: describeInitialize,
@@ -47,7 +49,9 @@ const tests = {
   startSubmit: describeStartSubmit,
   stopSubmit: describeStopSubmit,
   startAsyncValidation: describeStartAsyncValidation,
-  stopAsyncValidation: describeStopAsyncValidation
+  stopAsyncValidation: describeStopAsyncValidation,
+  registerField: describeRegisterField,
+  unregisterField: describeUnregisterField
 }
 
 const describeReducer = (name, structure, expect) => {
@@ -79,8 +83,8 @@ const describeReducer = (name, structure, expect) => {
     })
 
     Object.keys(tests).forEach(key => {
-      if (key === 'initialize') {
-        describe(`${name}.${key}`, tests[ key ](reducer, expect, structure))
+      if (key === 'registerField') {
+        describe.only(`${name}.${key}`, tests[ key ](reducer, expect, structure))
       }
     })
   })

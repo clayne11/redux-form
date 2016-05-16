@@ -7,7 +7,7 @@ import {
 import createDeleteInWithCleanUp from './deleteInWithCleanUp'
 
 const createReducer = structure => {
-  const { splice, empty, getIn, setIn, deleteIn, fromJS, size } = structure
+  const { splice, empty, getIn, setIn, deleteIn, fromJS, size, some } = structure
   const deleteInWithCleanUp = createDeleteInWithCleanUp(structure)
   const doSplice = (state, key, field, index, removeNum, value, force) => {
     const existing = getIn(state, `${key}.${field}`)
@@ -112,9 +112,13 @@ const createReducer = structure => {
       return result
     },
     [REGISTER_FIELD](state, { payload: { name, type } }) {
-      const mapData = fromJS({ name, type })
       let result = state
       const registeredFields = getIn(result, 'registeredFields')
+      if (some(registeredFields, (field) => getIn(field, 'name') === name)) {
+        return state
+      }
+
+      const mapData = fromJS({ name, type })
       result = setIn(state, 'registeredFields', splice(registeredFields, size(registeredFields), 0, mapData))
       return result
     },
