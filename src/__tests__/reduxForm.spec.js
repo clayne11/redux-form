@@ -185,25 +185,25 @@ const describeReduxForm = (name, structure, combineReducers, expect) => {
       const spy = createSpy()
       const { dispatch } = propChecker({}, spy, {
         validate: values => {
-          const animal = getIn(values, 'animal')
-          return animal && animal.length > 5 ? { animal: 'Too long' } : {}
+          const foo = getIn(values, 'foo')
+          return foo && foo.length > 5 ? { foo: 'Too long' } : {}
         }
       })  // render 0
       expect(spy.calls.length).toBe(1)
 
       // simulate typing the word "giraffe"
-      dispatch(change('testForm', 'animal', 'g'))       // render 1 (now dirty)
+      dispatch(change('testForm', 'foo', 'g'))       // render 1 (now dirty)
       expect(spy.calls.length).toBe(2)
 
-      dispatch(change('testForm', 'animal', 'gi'))      // no render
-      dispatch(change('testForm', 'animal', 'gir'))     // no render
-      dispatch(change('testForm', 'animal', 'gira'))    // no render
-      dispatch(change('testForm', 'animal', 'giraf'))   // no render
-      dispatch(change('testForm', 'animal', 'giraff'))  // render 2 (invalid)
+      dispatch(change('testForm', 'foo', 'gi'))      // no render
+      dispatch(change('testForm', 'foo', 'gir'))     // no render
+      dispatch(change('testForm', 'foo', 'gira'))    // no render
+      dispatch(change('testForm', 'foo', 'giraf'))   // no render
+      dispatch(change('testForm', 'foo', 'giraff'))  // render 2 (invalid)
       expect(spy.calls.length).toBe(3)
-      dispatch(change('testForm', 'animal', 'giraffe')) // no render
+      dispatch(change('testForm', 'foo', 'giraffe')) // no render
 
-      dispatch(change('testForm', 'animal', '')) // render 3 (clean/valid)
+      dispatch(change('testForm', 'foo', '')) // render 3 (clean/valid)
       expect(spy.calls.length).toBe(4)
 
       expect(spy).toHaveBeenCalled()
