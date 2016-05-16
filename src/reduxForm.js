@@ -63,7 +63,7 @@ const checkSubmit = submit => {
  */
 const createReduxForm =
   structure => {
-    const { deepEqual, empty, getIn, setIn, fromJS } = structure
+    const { deepEqual, empty, getIn, setIn, fromJS, some } = structure
     const hasErrors = createHasErrors(structure)
     const plainHasErrors = createHasErrors(plain)
     return initialConfig => {
@@ -149,9 +149,9 @@ const createReduxForm =
             return !this.valid
           }
 
-          register(key, field) {
+          register(key, field, type) {
             this.fields[ key ] = field
-            this.props.registerField(field.name)
+            this.props.registerField(field.name, type)
           }
 
           unregister(key, field) {
@@ -295,6 +295,10 @@ const createReduxForm =
             const hasSyncErrors = plainHasErrors(syncErrors)
             const hasAsyncErrors = hasErrors(asyncErrors)
             const hasSubmitErrors = hasErrors(submitErrors)
+            // const valid = some(formState.registeredFields, ((value) => {
+            //   console.log('value')
+            //   console.log(value)
+            // }))
             const valid = !(hasSyncErrors || hasAsyncErrors || hasSubmitErrors)
             const anyTouched = !!getIn(formState, 'anyTouched')
             const submitting = !!getIn(formState, 'submitting')

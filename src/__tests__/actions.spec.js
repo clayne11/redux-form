@@ -242,14 +242,15 @@ describe('actions', () => {
   })
 
   it('should create registerField action', () => {
-    expect(registerField('myForm', 'foo'))
+    expect(registerField('myForm', 'foo', 'Field'))
       .toEqual({
         type: REGISTER_FIELD,
         meta: {
           form: 'myForm'
         },
         payload: {
-          name: 'foo'
+          name: 'foo',
+          type: 'Field'
         }
       })
       .toPass(isFSA)

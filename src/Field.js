@@ -23,7 +23,7 @@ const createField = ({ deepEqual, getIn }) => {
     }
 
     componentWillMount() {
-      this.context._reduxForm.register(this.key, this)
+      this.context._reduxForm.register(this.key, this, 'Field')
     }
 
     componentWillReceiveProps(nextProps) {

@@ -23,7 +23,7 @@ const createFieldArray = ({ deepEqual, getIn, size }) => {
     }
 
     componentWillMount() {
-      this.context._reduxForm.register(this.key, this)
+      this.context._reduxForm.register(this.key, this, 'FieldArray')
     }
 
     componentWillReceiveProps(nextProps) {

@@ -111,9 +111,11 @@ const createReducer = structure => {
       result = setIn(result, 'initial', mapData)
       return result
     },
-    [REGISTER_FIELD](state, { payload: { name } }) {
+    [REGISTER_FIELD](state, { payload: { name, type } }) {
+      const mapData = fromJS({ name, type })
       let result = state
-      result = setIn(result, `registeredFields.${name}`, empty)
+      const registeredFields = getIn(result, 'registeredFields')
+      result = setIn(state, 'registeredFields', splice(registeredFields, size(registeredFields) - 1, 0, mapData))
       return result
     },
     [RESET](state) {
@@ -190,9 +192,20 @@ const createReducer = structure => {
       return result
     },
     [UNREGISTER_FIELD](state, { payload: { name } }) {
-      let result = state
-      result = deleteIn(result, `registeredFields.${name}`)
-      return result
+      const registeredFields = getIn(state, 'registeredFields')
+
+      // in case the form was destroyed and registeredFields no longer exists
+      if (!registeredFields) {
+        return state
+      }
+
+      const fieldIndex = registeredFields.findIndex((value) => {
+        return getIn(value, 'name') === name
+      })
+      if (size(registeredFields) === 1 && fieldIndex >= 0) {
+        return deleteInWithCleanUp(state, 'registeredFields')
+      }
+      return  setIn(state, 'registeredFields', splice(registeredFields, fieldIndex, 1))
     },
     [UNTOUCH](state, { meta: { fields } }) {
       let result = state

@@ -59,8 +59,8 @@ export const focus = (form, field) =>
 export const initialize = (form, values) =>
   ({ type: INITIALIZE, meta: { form }, payload: values })
 
-export const registerField = (form, name) =>
-  ({ type: REGISTER_FIELD, meta: { form }, payload: { name } })
+export const registerField = (form, name, type) =>
+  ({ type: REGISTER_FIELD, meta: { form }, payload: { name, type } })
 
 export const reset = form =>
   ({ type: RESET, meta: { form } })
