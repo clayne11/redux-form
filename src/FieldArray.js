@@ -1,4 +1,4 @@
-import React, { Component, PropTypes } from 'react'
+import { Component, PropTypes, createElement } from 'react'
 import invariant from 'invariant'
 import createConnectedFieldArray from './ConnectedFieldArray'
 import shallowCompare from 'react-addons-shallow-compare'
@@ -15,7 +15,11 @@ const createFieldArray = ({ deepEqual, getIn, size }) => {
     }
 
     shouldComponentUpdate(nextProps) {
-      return shallowCompare(this, nextProps)
+      const propsWithoutComponent = { ...this.props }
+      const nextPropsWithoutComponent = { ...nextProps }
+      delete propsWithoutComponent.component
+      delete nextPropsWithoutComponent.component
+      return shallowCompare({ props: propsWithoutComponent }, nextPropsWithoutComponent)
     }
 
     componentWillMount() {
@@ -46,8 +50,10 @@ const createFieldArray = ({ deepEqual, getIn, size }) => {
     }
 
     render() {
-      const { ConnectedFieldArray } = this
-      return <ConnectedFieldArray {...this.props} ref="connected"/>
+      return createElement(this.ConnectedFieldArray, {
+        ...this.props,
+        ref: 'connected'
+      })
     }
   }
 

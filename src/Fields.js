@@ -1,7 +1,10 @@
-import { Component, PropTypes, createElement } from 'react'
+import React, { Component, PropTypes } from 'react'
 import invariant from 'invariant'
 import createConnectedField from './ConnectedField'
 import shallowCompare from 'react-addons-shallow-compare'
+
+let keys = 0
+const generateKey = () => `redux-form-fields-${keys++}`
 
 const createField = ({ deepEqual, getIn }) => {
 
@@ -11,19 +14,16 @@ const createField = ({ deepEqual, getIn }) => {
       if (!context._reduxForm) {
         throw new Error('Field must be inside a component decorated with reduxForm()')
       }
+      this.key = generateKey()
       this.ConnectedField = createConnectedField(context._reduxForm, { deepEqual, getIn }, props.name)
     }
 
     shouldComponentUpdate(nextProps) {
-      const propsWithoutComponent = { ...this.props }
-      const nextPropsWithoutComponent = { ...nextProps }
-      delete propsWithoutComponent.component
-      delete nextPropsWithoutComponent.component
-      return shallowCompare({ props: propsWithoutComponent }, nextPropsWithoutComponent)
+      return shallowCompare(this, nextProps)
     }
 
     componentWillMount() {
-      this.context._reduxForm.register(this.name, 'Field')
+      this.context._reduxForm.register(this.key, this)
     }
 
     componentWillReceiveProps(nextProps) {
@@ -35,7 +35,11 @@ const createField = ({ deepEqual, getIn }) => {
     }
 
     componentWillUnmount() {
-      this.context._reduxForm.unregister(this.name)
+      this.context._reduxForm.unregister(this.key)
+    }
+
+    get valid() {
+      return this.refs.connected.getWrappedInstance().valid
     }
 
     getRenderedComponent() {
@@ -50,10 +54,8 @@ const createField = ({ deepEqual, getIn }) => {
     }
 
     render() {
-      return createElement(this.ConnectedField, {
-        ...this.props,
-        ref: 'connected'
-      })
+      const { ConnectedField } = this
+      return <ConnectedField {...this.props} ref="connected"/>
     }
   }
 

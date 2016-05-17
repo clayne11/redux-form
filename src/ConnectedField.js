@@ -1,4 +1,4 @@
-import React, { Component, PropTypes } from 'react'
+import { Component, PropTypes, createElement } from 'react'
 import { connect } from 'react-redux'
 import createFieldProps from './createFieldProps'
 import { partial, mapValues } from 'lodash'
@@ -20,7 +20,10 @@ const createConnectedField = ({
 
     get syncError() {
       const { _reduxForm: { getSyncErrors } } = this.context
-      return plain.getIn(getSyncErrors(), name)
+      const error = plain.getIn(getSyncErrors(), name)
+      // Because the error for this field might not be at a level in the error structure where
+      // it can be set directly, it might need to be unwrapped from the _error property
+      return error && error._error ? error._error : error
     }
 
     getRenderedComponent() {
@@ -40,7 +43,7 @@ const createConnectedField = ({
       if (withRef) {
         props.ref = 'renderedComponent'
       }
-      return React.createElement(component, props)
+      return createElement(component, props)
     }
   }
 

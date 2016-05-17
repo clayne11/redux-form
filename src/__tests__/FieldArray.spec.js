@@ -1,6 +1,7 @@
 /* eslint react/no-multi-comp:0 */
 import React, { Component } from 'react'
-import { createSpy } from 'expect'
+import domExpect, { createSpy } from 'expect'
+import expectElement from 'expect-element'
 import { Provider } from 'react-redux'
 import { combineReducers as plainCombineReducers, createStore } from 'redux'
 import { combineReducers as immutableCombineReducers } from 'redux-immutablejs'
@@ -13,6 +14,8 @@ import plainExpectations from '../structure/plain/expectations'
 import immutable from '../structure/immutable'
 import immutableExpectations from '../structure/immutable/expectations'
 import addExpectations from './addExpectations'
+
+domExpect.extend(expectElement)
 
 const describeFieldArray = (name, structure, combineReducers, expect) => {
   const reduxForm = createReduxForm(structure)

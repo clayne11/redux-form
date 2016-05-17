@@ -123,7 +123,7 @@ const describeCreateFieldProps = (name, structure, expect) => {
       expect(visitedResult.visited).toBe(true)
     })
 
-    it('should read sync errors from state', () => {
+    it('should read sync errors from param', () => {
       const noErrorResult = createFieldProps(getIn, 'foo', {
         initial: 'bar',
         value: 'bar',
@@ -250,6 +250,15 @@ const describeCreateFieldProps = (name, structure, expect) => {
         type: 'radio',
         _value: 'bar'
       }).checked).toBe(false)
+    })
+
+    it('should default value to [] for multi-selects', () => {
+      expect(createFieldProps(getIn, 'foo', {
+        state: empty,
+        type: 'select-multiple'
+      }).value)
+        .toBeA('array')
+        .toEqual([])
     })
 
     it('should replace undefined value with empty string', () => {

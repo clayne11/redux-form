@@ -1,7 +1,7 @@
 {
-  "name": "redux-form-material-ui-example",
+  "name": "redux-form-selecting-form-values-example",
   "version": "6.0.0-alpha.13",
-  "description": "An example of redux-form with material-ui",
+  "description": "An example of selecting form values",
   "repository": {
     "type": "git",
     "url": "https://github.com/erikras/redux-form"
@@ -47,12 +47,10 @@
     "html-loader": "^0.4.3",
     "json-loader": "^0.5.4",
     "markdown-loader": "^0.1.7",
-    "material-ui": "^0.14.4",
     "raw-loader": "^0.5.1",
     "react": "^15.0.0-rc.2",
     "react-dom": "^15.0.0-rc.2",
     "react-redux": "^4.4.1",
-    "react-tap-event-plugin": "^1.0.0",
     "redux": "^3.3.1",
     "redux-form": "6.0.0-alpha.13",
     "redux-form-website-template": "0.0.28"

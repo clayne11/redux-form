@@ -1,6 +1,6 @@
 {
   "name": "redux-form-immutable-example",
-  "version": "6.0.0-alpha.10",
+  "version": "6.0.0-alpha.13",
   "description": "An immutable-js example for redux-form",
   "repository": {
     "type": "git",
@@ -45,6 +45,7 @@
   "dependencies": {
     "babel-polyfill": "^6.7.4",
     "html-loader": "^0.4.3",
+    "immutable": "^3.8.1",
     "json-loader": "^0.5.4",
     "markdown-loader": "^0.1.7",
     "raw-loader": "^0.5.1",
@@ -52,8 +53,8 @@
     "react-dom": "^15.0.1",
     "react-redux": "^4.4.2",
     "redux": "^3.4.0",
-    "redux-form": "6.0.0-alpha.10",
-    "redux-form-website-template": "0.0.27",
+    "redux-form": "6.0.0-alpha.13",
+    "redux-form-website-template": "0.0.28",
     "redux-immutablejs": "0.0.8"
   },
   "devDependencies": {
