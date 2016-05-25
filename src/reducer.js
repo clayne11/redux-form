@@ -15,12 +15,13 @@ const createReducer = structure => {
       setIn(state, `${key}.${field}`, splice(existing, index, removeNum, value)) :
       state
   }
-  const rootKeys = [ 'values', 'fields', 'submitErrors', 'asyncErrors' ]
+  const rootKeys = [ 'values', 'fields', 'submitErrors', 'syncErrors', 'asyncErrors' ]
   const arraySplice = (state, field, index, removeNum, value) => {
     let result = state
     result = doSplice(result, 'values', field, index, removeNum, value, true)
     result = doSplice(result, 'fields', field, index, removeNum, empty)
     result = doSplice(result, 'submitErrors', field, index, removeNum, empty)
+    result = doSplice(result, 'syncErrors', field, index, removeNum, empty)
     result = doSplice(result, 'asyncErrors', field, index, removeNum, empty)
     return result
   }

@@ -7,24 +7,24 @@ import immutableExpectations from '../structure/immutable/expectations'
 import addExpectations from './addExpectations'
 
 const describeCreateFieldProps = (name, structure, expect) => {
-  const { empty, getIn, fromJS } = structure
+  const { empty, getIn, setIn, fromJS } = structure
 
   describe(name, () => {
     it('should pass value through', () => {
-      expect(createFieldProps(getIn, 'foo', { value: 'hello' }).value).toBe('hello')
+      expect(createFieldProps({ getIn, setIn, empty }, 'foo', { value: 'hello' }).value).toBe('hello')
     })
 
     it('should pass dirty/pristine through', () => {
-      expect(createFieldProps(getIn, 'foo', { dirty: false, pristine: true }).dirty).toBe(false)
-      expect(createFieldProps(getIn, 'foo', { dirty: false, pristine: true }).pristine).toBe(true)
-      expect(createFieldProps(getIn, 'foo', { dirty: true, pristine: false }).dirty).toBe(true)
-      expect(createFieldProps(getIn, 'foo', { dirty: true, pristine: false }).pristine).toBe(false)
+      expect(createFieldProps({ getIn, setIn, empty }, 'foo', { dirty: false, pristine: true }).dirty).toBe(false)
+      expect(createFieldProps({ getIn, setIn, empty }, 'foo', { dirty: false, pristine: true }).pristine).toBe(true)
+      expect(createFieldProps({ getIn, setIn, empty }, 'foo', { dirty: true, pristine: false }).dirty).toBe(true)
+      expect(createFieldProps({ getIn, setIn, empty }, 'foo', { dirty: true, pristine: false }).pristine).toBe(false)
     })
 
     it('should provide onBlur', () => {
       const blur = createSpy()
       expect(blur).toNotHaveBeenCalled()
-      const result = createFieldProps(getIn, 'foo', { value: 'bar', blur })
+      const result = createFieldProps({ getIn, setIn, empty }, 'foo', { value: 'bar', blur })
       expect(result.onBlur).toBeA('function')
       expect(blur).toNotHaveBeenCalled()
       result.onBlur('rabbit')
@@ -36,24 +36,32 @@ const describeCreateFieldProps = (name, structure, expect) => {
     it('should provide onChange', () => {
       const change = createSpy()
       expect(change).toNotHaveBeenCalled()
-      const result = createFieldProps(getIn, 'foo', { value: 'bar', change })
+      const errors = fromJS({ rabbit: 'foo' })
+      const result = createFieldProps({ getIn, setIn, empty },
+        'foo',
+        { value: 'bar', change },
+        undefined,
+        undefined,
+        () => errors,
+        () => {},
+        () => empty)
       expect(result.onChange).toBeA('function')
       expect(change).toNotHaveBeenCalled()
       result.onChange('rabbit')
       expect(change)
         .toHaveBeenCalled()
-        .toHaveBeenCalledWith('rabbit')
+        .toHaveBeenCalledWith('rabbit', errors)
     })
 
     it('should provide onUpdate alias for onChange', () => {
-      const result = createFieldProps(getIn, 'foo', { value: 'bar' })
+      const result = createFieldProps({ getIn, setIn, empty }, 'foo', { value: 'bar' })
       expect(result.onUpdate).toBe(result.onChange)
     })
 
     it('should provide onFocus', () => {
       const focus = createSpy()
       expect(focus).toNotHaveBeenCalled()
-      const result = createFieldProps(getIn, 'foo', { value: 'bar', focus })
+      const result = createFieldProps({ getIn, setIn, empty }, 'foo', { value: 'bar', focus })
       expect(result.onFocus).toBeA('function')
       expect(focus).toNotHaveBeenCalled()
       result.onFocus('rabbit')
@@ -63,22 +71,22 @@ const describeCreateFieldProps = (name, structure, expect) => {
     })
 
     it('should provide onDragStart', () => {
-      const result = createFieldProps(getIn, 'foo', { value: 'bar' })
+      const result = createFieldProps({ getIn, setIn, empty }, 'foo', { value: 'bar' })
       expect(result.onDragStart).toBeA('function')
     })
 
     it('should provide onDrop', () => {
-      const result = createFieldProps(getIn, 'foo', { value: 'bar' })
+      const result = createFieldProps({ getIn, setIn, empty }, 'foo', { value: 'bar' })
       expect(result.onDrop).toBeA('function')
     })
 
     it('should read active from state', () => {
-      const inactiveResult = createFieldProps(getIn, 'foo', {
+      const inactiveResult = createFieldProps({ getIn, setIn, empty }, 'foo', {
         value: 'bar',
         state: empty
       })
       expect(inactiveResult.active).toBe(false)
-      const activeResult = createFieldProps(getIn, 'foo', {
+      const activeResult = createFieldProps({ getIn, setIn, empty }, 'foo', {
         value: 'bar',
         state: fromJS({
           active: true
@@ -88,12 +96,12 @@ const describeCreateFieldProps = (name, structure, expect) => {
     })
 
     it('should read touched from state', () => {
-      const untouchedResult = createFieldProps(getIn, 'foo', {
+      const untouchedResult = createFieldProps({ getIn, setIn, empty }, 'foo', {
         value: 'bar',
         state: empty
       })
       expect(untouchedResult.touched).toBe(false)
-      const touchedResult = createFieldProps(getIn, 'foo', {
+      const touchedResult = createFieldProps({ getIn, setIn, empty }, 'foo', {
         value: 'bar',
         state: fromJS({
           touched: true
@@ -103,12 +111,12 @@ const describeCreateFieldProps = (name, structure, expect) => {
     })
 
     it('should read visited from state', () => {
-      const notVisitedResult = createFieldProps(getIn, 'foo', {
+      const notVisitedResult = createFieldProps({ getIn, setIn, empty }, 'foo', {
         value: 'bar',
         state: empty
       })
       expect(notVisitedResult.visited).toBe(false)
-      const visitedResult = createFieldProps(getIn, 'foo', {
+      const visitedResult = createFieldProps({ getIn, setIn, empty }, 'foo', {
         value: 'bar',
         state: fromJS({
           visited: true
@@ -118,14 +126,14 @@ const describeCreateFieldProps = (name, structure, expect) => {
     })
 
     it('should read sync errors from param', () => {
-      const noErrorResult = createFieldProps(getIn, 'foo', {
+      const noErrorResult = createFieldProps({ getIn, setIn, empty }, 'foo', {
         value: 'bar',
         state: empty
       })
       expect(noErrorResult.error).toNotExist()
       expect(noErrorResult.valid).toBe(true)
       expect(noErrorResult.invalid).toBe(false)
-      const errorResult = createFieldProps(getIn, 'foo', {
+      const errorResult = createFieldProps({ getIn, setIn, empty }, 'foo', {
         value: 'bar',
         state: empty
       }, 'This is an error')
@@ -135,14 +143,14 @@ const describeCreateFieldProps = (name, structure, expect) => {
     })
 
     it('should read async errors from state', () => {
-      const noErrorResult = createFieldProps(getIn, 'foo', {
+      const noErrorResult = createFieldProps({ getIn, setIn, empty }, 'foo', {
         value: 'bar',
         state: empty
       })
       expect(noErrorResult.error).toNotExist()
       expect(noErrorResult.valid).toBe(true)
       expect(noErrorResult.invalid).toBe(false)
-      const errorResult = createFieldProps(getIn, 'foo', {
+      const errorResult = createFieldProps({ getIn, setIn, empty }, 'foo', {
         value: 'bar',
         state: empty
       }, 'This is an error')
@@ -152,14 +160,14 @@ const describeCreateFieldProps = (name, structure, expect) => {
     })
 
     it('should read submit errors from state', () => {
-      const noErrorResult = createFieldProps(getIn, 'foo', {
+      const noErrorResult = createFieldProps({ getIn, setIn, empty }, 'foo', {
         value: 'bar',
         state: empty
       })
       expect(noErrorResult.error).toNotExist()
       expect(noErrorResult.valid).toBe(true)
       expect(noErrorResult.invalid).toBe(false)
-      const errorResult = createFieldProps(getIn, 'foo', {
+      const errorResult = createFieldProps({ getIn, setIn, empty }, 'foo', {
         value: 'bar',
         state: empty,
         submitError: 'This is an error'
@@ -170,14 +178,14 @@ const describeCreateFieldProps = (name, structure, expect) => {
     })
 
     it('should prioritize sync errors over async or submit errors', () => {
-      const noErrorResult = createFieldProps(getIn, 'foo', {
+      const noErrorResult = createFieldProps({ getIn, setIn, empty }, 'foo', {
         value: 'bar',
         state: empty
       })
       expect(noErrorResult.error).toNotExist()
       expect(noErrorResult.valid).toBe(true)
       expect(noErrorResult.invalid).toBe(false)
-      const errorResult = createFieldProps(getIn, 'foo', {
+      const errorResult = createFieldProps({ getIn, setIn, empty }, 'foo', {
         value: 'bar',
         asyncError: 'async error',
         submitError: 'submit error'
@@ -188,7 +196,7 @@ const describeCreateFieldProps = (name, structure, expect) => {
     })
 
     it('should pass through other props', () => {
-      const result = createFieldProps(getIn, 'foo', {
+      const result = createFieldProps({ getIn, setIn, empty }, 'foo', {
         value: 'bar',
         state: empty,
         someOtherProp: 'dog',
@@ -201,16 +209,16 @@ const describeCreateFieldProps = (name, structure, expect) => {
     })
 
     it('should set checked for checkboxes', () => {
-      expect(createFieldProps(getIn, 'foo', {
+      expect(createFieldProps({ getIn, setIn, empty }, 'foo', {
         state: empty,
         type: 'checkbox'
       }).checked).toBe(false)
-      expect(createFieldProps(getIn, 'foo', {
+      expect(createFieldProps({ getIn, setIn, empty }, 'foo', {
         value: true,
         state: empty,
         type: 'checkbox'
       }).checked).toBe(true)
-      expect(createFieldProps(getIn, 'foo', {
+      expect(createFieldProps({ getIn, setIn, empty }, 'foo', {
         value: false,
         state: empty,
         type: 'checkbox'
@@ -218,18 +226,18 @@ const describeCreateFieldProps = (name, structure, expect) => {
     })
 
     it('should set checked for radio buttons', () => {
-      expect(createFieldProps(getIn, 'foo', {
+      expect(createFieldProps({ getIn, setIn, empty }, 'foo', {
         state: empty,
         type: 'radio',
         _value: 'bar'
       }).checked).toBe(false)
-      expect(createFieldProps(getIn, 'foo', {
+      expect(createFieldProps({ getIn, setIn, empty }, 'foo', {
         value: 'bar',
         state: empty,
         type: 'radio',
         _value: 'bar'
       }).checked).toBe(true)
-      expect(createFieldProps(getIn, 'foo', {
+      expect(createFieldProps({ getIn, setIn, empty }, 'foo', {
         value: 'baz',
         state: empty,
         type: 'radio',
@@ -238,7 +246,7 @@ const describeCreateFieldProps = (name, structure, expect) => {
     })
 
     it('should default value to [] for multi-selects', () => {
-      expect(createFieldProps(getIn, 'foo', {
+      expect(createFieldProps({ getIn, setIn, empty }, 'foo', {
         state: empty,
         type: 'select-multiple'
       }).value)
@@ -247,7 +255,7 @@ const describeCreateFieldProps = (name, structure, expect) => {
     })
 
     it('should replace undefined value with empty string', () => {
-      const result = createFieldProps(getIn, 'foo', {
+      const result = createFieldProps({ getIn, setIn, empty }, 'foo', {
         state: empty
       })
       expect(result.value).toBe('')
@@ -257,7 +265,7 @@ const describeCreateFieldProps = (name, structure, expect) => {
       const defaultValue = {
         foo: 'some complex value'
       }
-      const result = createFieldProps(getIn, 'foo', {
+      const result = createFieldProps({ getIn, setIn, empty }, 'foo', {
         state: empty
       }, undefined, defaultValue)
       expect(result.value).toBe(defaultValue)

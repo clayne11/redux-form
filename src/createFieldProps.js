@@ -32,11 +32,13 @@ const processProps = (props, _value) => {
   return props
 }
 
-const createFieldProps = (getIn, name,
+const createFieldProps = ({ getIn, setIn, empty }, name,
   { asyncError, blur, change, dirty, focus, pristine, state, submitError,
-    value, _value, ...rest }, syncError, defaultValue = '', asyncValidate = noop) => {
+    value, _value, ...rest }, syncError, defaultValue = '', syncValidate = noop,
+    asyncValidate = noop, getAllValues) => {
   const error = syncError || asyncError || submitError
-  const onChange = createOnChange(change)
+  const onChange = createOnChange(change, syncValidate, getAllValues, name,
+    { getIn, setIn, empty })
   return processProps({
     active: state && !!getIn(state, 'active'),
     dirty,

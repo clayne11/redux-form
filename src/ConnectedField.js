@@ -5,13 +5,14 @@ import { partial, mapValues } from 'lodash'
 import plain from './structure/plain'
 
 const createConnectedField = ({
+  syncValidate,
   asyncValidate,
   blur,
   change,
   focus,
   getFormState,
   initialValues
-}, { deepEqual, getIn }, name) => {
+}, { deepEqual, getIn, setIn, empty }, name) => {
 
   const propInitialValue = initialValues && getIn(initialValues, name)
 
@@ -45,14 +46,16 @@ const createConnectedField = ({
     }
 
     render() {
-      const { component, defaultValue, withRef, ...rest } = this.props
+      const { component, defaultValue, withRef, getAllValues, ...rest } = this.props
       const { _reduxForm: { adapter } } = this.context
-      const props = createFieldProps(getIn,
+      const props = createFieldProps({ getIn, setIn, empty },
         name,
         rest,
         this.syncError,
         defaultValue,
-        asyncValidate
+        syncValidate,
+        asyncValidate,
+        getAllValues
       )
       if (withRef) {
         props.ref = 'renderedComponent'
@@ -70,20 +73,27 @@ const createConnectedField = ({
 
   ConnectedField.propTypes = {
     component: PropTypes.oneOfType([ PropTypes.func, PropTypes.string ]).isRequired,
-    defaultValue: PropTypes.any
+    defaultValue: PropTypes.any,
+    getAllValues: PropTypes.func.isRequired
   }
 
   ConnectedField.contextTypes = {
     _reduxForm: PropTypes.object
   }
 
+  let allValues
+  const getAllValues = () => allValues
+
   const actions = mapValues({ blur, change, focus }, actionCreator => partial(actionCreator, name))
   const connector = connect(
     (state, ownProps) => {
+      // update allValues so that they can be fetched when a field is changed
+      allValues = getIn(getFormState(state), 'values')
       const initial = getIn(getFormState(state), `initial.${name}`) || propInitialValue
       const value = getIn(getFormState(state), `values.${name}`)
       const pristine = value === initial
       return {
+        syncError: getIn(getFormState(state), `syncErrors.${name}`),
         asyncError: getIn(getFormState(state), `asyncErrors.${name}`),
         asyncValidating: getIn(getFormState(state), 'asyncValidating') === name,
         dirty: !pristine,
@@ -91,7 +101,8 @@ const createConnectedField = ({
         state: getIn(getFormState(state), `fields.${name}`),
         submitError: getIn(getFormState(state), `submitErrors.${name}`),
         value,
-        _value: ownProps.value // save value passed in (for checkboxes)
+        _value: ownProps.value, // save value passed in (for checkboxes)
+        getAllValues
       }
     },
     actions,

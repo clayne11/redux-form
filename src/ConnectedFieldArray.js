@@ -14,6 +14,7 @@ const createConnectedFieldArray = ({
   arraySplice,
   arraySwap,
   arrayUnshift,
+  syncValidate,
   asyncValidate,
   blur,
   change,
@@ -91,6 +92,7 @@ const createConnectedFieldArray = ({
       const value = getIn(getFormState(state), `values.${name}`)
       const pristine = deepEqual(value, initial)
       return {
+        syncError: getIn(getFormState(state), `syncErrors.${name}._error`),
         asyncError: getIn(getFormState(state), `asyncErrors.${name}._error`),
         dirty: !pristine,
         pristine,

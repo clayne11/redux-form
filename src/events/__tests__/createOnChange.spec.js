@@ -1,18 +1,33 @@
-import expect, { createSpy } from 'expect'
+import { createSpy } from 'expect'
 import createOnChange from '../createOnChange'
+import plain from '../../structure/plain'
+import plainExpectations from '../../structure/plain/expectations'
+import immutable from '../../structure/immutable'
+import immutableExpectations from '../../structure/immutable/expectations'
+import addExpectations from '../../__tests__/addExpectations'
 
-describe('createOnChange', () => {
-  it('should return a function', () => {
-    expect(createOnChange())
-      .toExist()
-      .toBeA('function')
-  })
+const noop = () => {}
 
-  it('should return a function that calls change with name and value', () => {
-    const change = createSpy()
-    createOnChange(change)('bar')
-    expect(change)
-      .toHaveBeenCalled()
-      .toHaveBeenCalledWith('bar')
+const describeCreateOnChange = (name, structure, expect) => {
+  const { empty, fromJS } = structure
+
+  describe(name, () => {
+    it('should return a function', () => {
+      expect(createOnChange(noop, noop, noop, 'foo', { setIn: noop, empty }))
+        .toExist()
+        .toBeA('function')
+    })
+
+    it('should return a function that calls change with name, value, and errors', () => {
+      const change = createSpy()
+      const errors = fromJS({ bar: 'test' })
+      createOnChange(change, () => errors, noop, 'bar', { setIn: noop, empty })('bar')
+      expect(change)
+        .toHaveBeenCalled()
+        .toHaveBeenCalledWith('bar', errors)
+    })
   })
-})
+}
+
+describeCreateOnChange('createOnChange.plain', plain, addExpectations(plainExpectations))
+describeCreateOnChange('createOnChange.immutable', immutable, addExpectations(immutableExpectations))

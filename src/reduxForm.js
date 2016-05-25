@@ -323,7 +323,8 @@ const createReduxForm =
               syncErrors,
               values,
               valid,
-              registeredFields: getIn(formState, 'registeredFields')
+              registeredFields: getIn(formState, 'registeredFields'),
+              syncValidate: validate
             }
           },
           (dispatch, initialProps) => {
