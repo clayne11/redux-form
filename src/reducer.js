@@ -82,13 +82,13 @@ const createReducer = structure => {
       }
       return result
     },
-    [CHANGE](state, { meta: { field, touch }, payload }) {
+    [CHANGE](state, { meta: { field, touch }, payload: { value, syncErrors } }) {
       let result = state
       const initial = getIn(result, `initial.${field}`)
-      if (initial === undefined && payload === '') {
+      if (initial === undefined && value === '') {
         result = deleteInWithCleanUp(result, `values.${field}`)
-      } else if (payload !== undefined) {
-        result = setIn(result, `values.${field}`, payload)
+      } else if (value !== undefined) {
+        result = setIn(result, `values.${field}`, value)
       }
       result = deleteInWithCleanUp(result, `asyncErrors.${field}`)
       result = deleteInWithCleanUp(result, `submitErrors.${field}`)
@@ -96,6 +96,7 @@ const createReducer = structure => {
         result = setIn(result, `fields.${field}.touched`, true)
         result = setIn(result, 'anyTouched', true)
       }
+      result = setIn(result, 'syncErrors', syncErrors)
       return result
     },
     [FOCUS](state, { meta: { field } }) {

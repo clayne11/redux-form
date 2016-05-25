@@ -44,7 +44,7 @@ const describeCreateFieldProps = (name, structure, expect) => {
         undefined,
         () => errors,
         () => {},
-        () => empty)
+        () => ({ allValues: empty, props: {} }))
       expect(result.onChange).toBeA('function')
       expect(change).toNotHaveBeenCalled()
       result.onChange('rabbit')

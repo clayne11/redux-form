@@ -1,20 +1,21 @@
 import { change } from '../actions'
 
-const describeChange = (reducer, expect, { fromJS }) => () => {
+const describeChange = (reducer, expect, { fromJS, empty }) => () => {
   it('should set value on change with empty state', () => {
-    const state = reducer(undefined, change('foo', 'myField', 'myValue'))
+    const state = reducer(undefined, change('foo', 'myField', 'myValue', empty))
     expect(state)
       .toEqualMap({
         foo: {
           values: {
             myField: 'myValue'
-          }
+          },
+          syncErrors: empty
         }
       })
   })
 
   it('should set value on change and touch with empty state', () => {
-    const state = reducer(undefined, change('foo', 'myField', 'myValue', true))
+    const state = reducer(undefined, change('foo', 'myField', 'myValue', empty, true))
     expect(state)
       .toEqualMap({
         foo: {
@@ -26,7 +27,8 @@ const describeChange = (reducer, expect, { fromJS }) => () => {
             myField: {
               touched: true
             }
-          }
+          },
+          syncErrors: empty
         }
       })
   })
@@ -39,9 +41,10 @@ const describeChange = (reducer, expect, { fromJS }) => () => {
         },
         initial: {
           myField: 'initialValue'
-        }
+        },
+        syncErrors: empty
       }
-    }), change('foo', 'myField', 'myValue', true))
+    }), change('foo', 'myField', 'myValue', empty, true))
     expect(state)
       .toEqualMap({
         foo: {
@@ -56,7 +59,8 @@ const describeChange = (reducer, expect, { fromJS }) => () => {
             myField: {
               touched: true
             }
-          }
+          },
+          syncErrors: empty
         }
       })
   })
@@ -69,9 +73,10 @@ const describeChange = (reducer, expect, { fromJS }) => () => {
         },
         initial: {
           myField: 'initialValue'
-        }
+        },
+        syncErrors: empty
       }
-    }), change('foo', 'myField', '', true))
+    }), change('foo', 'myField', '', empty, true))
     expect(state)
       .toEqualMap({
         foo: {
@@ -86,7 +91,8 @@ const describeChange = (reducer, expect, { fromJS }) => () => {
             myField: {
               touched: true
             }
-          }
+          },
+          syncErrors: empty
         }
       })
   })
@@ -96,9 +102,10 @@ const describeChange = (reducer, expect, { fromJS }) => () => {
       foo: {
         values: {
           myField: 'initialValue'
-        }
+        },
+        syncErrors: empty
       }
-    }), change('foo', 'myField', '', true))
+    }), change('foo', 'myField', '', empty, true))
     expect(state)
       .toEqualMap({
         foo: {
@@ -107,7 +114,8 @@ const describeChange = (reducer, expect, { fromJS }) => () => {
             myField: {
               touched: true
             }
-          }
+          },
+          syncErrors: empty
         }
       })
   })
@@ -117,9 +125,10 @@ const describeChange = (reducer, expect, { fromJS }) => () => {
       foo: {
         values: {
           myField: [ 'initialValue' ]
-        }
+        },
+        syncErrors: empty
       }
-    }), change('foo', 'myField[0]', '', true))
+    }), change('foo', 'myField[0]', '', empty, true))
     expect(state)
       .toEqualMap({
         foo: {
@@ -133,7 +142,8 @@ const describeChange = (reducer, expect, { fromJS }) => () => {
                 touched: true
               }
             ]
-          }
+          },
+          syncErrors: empty
         }
       })
   })
@@ -145,9 +155,10 @@ const describeChange = (reducer, expect, { fromJS }) => () => {
           nested: {
             myField: 'initialValue'
           }
-        }
+        },
+        syncErrors: empty
       }
-    }), change('foo', 'nested.myField', '', true))
+    }), change('foo', 'nested.myField', '', empty, true))
     expect(state)
       .toEqualMap({
         foo: {
@@ -158,7 +169,8 @@ const describeChange = (reducer, expect, { fromJS }) => () => {
                 touched: true
               }
             }
-          }
+          },
+          syncErrors: empty
         }
       })
   })
@@ -170,7 +182,7 @@ const describeChange = (reducer, expect, { fromJS }) => () => {
           myField: 'initialValue'
         }
       }
-    }), change('foo', 'myField', undefined, true))
+    }), change('foo', 'myField', undefined, empty, true))
     expect(state)
       .toEqualMap({
         foo: {
@@ -182,7 +194,8 @@ const describeChange = (reducer, expect, { fromJS }) => () => {
             myField: {
               touched: true
             }
-          }
+          },
+          syncErrors: empty
         }
       })
   })
@@ -201,20 +214,21 @@ const describeChange = (reducer, expect, { fromJS }) => () => {
         },
         error: 'some global error'
       }
-    }), change('foo', 'myField', 'different', false))
+    }), change('foo', 'myField', 'different', empty, false))
     expect(state)
       .toEqualMap({
         foo: {
           values: {
             myField: 'different'
           },
+          syncErrors: empty,
           error: 'some global error' // unaffected by CHANGE
         }
       })
   })
 
   it('should set nested value on change with empty state', () => {
-    const state = reducer(undefined, change('foo', 'myField.mySubField', 'myValue', false))
+    const state = reducer(undefined, change('foo', 'myField.mySubField', 'myValue', empty, false))
     expect(state)
       .toEqualMap({
         foo: {
@@ -222,7 +236,8 @@ const describeChange = (reducer, expect, { fromJS }) => () => {
             myField: {
               mySubField: 'myValue'
             }
-          }
+          },
+          syncErrors: empty
         }
       })
   })

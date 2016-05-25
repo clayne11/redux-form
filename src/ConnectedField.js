@@ -46,7 +46,7 @@ const createConnectedField = ({
     }
 
     render() {
-      const { component, defaultValue, withRef, getAllValues, ...rest } = this.props
+      const { component, defaultValue, withRef, getAllValuesAndProps, ...rest } = this.props
       const { _reduxForm: { adapter } } = this.context
       const props = createFieldProps({ getIn, setIn, empty },
         name,
@@ -55,7 +55,7 @@ const createConnectedField = ({
         defaultValue,
         syncValidate,
         asyncValidate,
-        getAllValues
+        getAllValuesAndProps
       )
       if (withRef) {
         props.ref = 'renderedComponent'
@@ -74,21 +74,24 @@ const createConnectedField = ({
   ConnectedField.propTypes = {
     component: PropTypes.oneOfType([ PropTypes.func, PropTypes.string ]).isRequired,
     defaultValue: PropTypes.any,
-    getAllValues: PropTypes.func.isRequired
+    getAllValuesAndProps: PropTypes.func.isRequired
   }
 
   ConnectedField.contextTypes = {
     _reduxForm: PropTypes.object
   }
 
-  let allValues
-  const getAllValues = () => allValues
+  let allValues = empty
+  let props
+  const getAllValuesAndProps = () => ({ allValues, props })
 
   const actions = mapValues({ blur, change, focus }, actionCreator => partial(actionCreator, name))
   const connector = connect(
     (state, ownProps) => {
       // update allValues so that they can be fetched when a field is changed
-      allValues = getIn(getFormState(state), 'values')
+      allValues = getIn(getFormState(state), 'values') || empty
+      props = ownProps
+
       const initial = getIn(getFormState(state), `initial.${name}`) || propInitialValue
       const value = getIn(getFormState(state), `values.${name}`)
       const pristine = value === initial
@@ -102,7 +105,7 @@ const createConnectedField = ({
         submitError: getIn(getFormState(state), `submitErrors.${name}`),
         value,
         _value: ownProps.value, // save value passed in (for checkboxes)
-        getAllValues
+        getAllValuesAndProps
       }
     },
     actions,

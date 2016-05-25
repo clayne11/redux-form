@@ -18,7 +18,7 @@ import addExpectations from './addExpectations'
 import { change } from '../actions'
 
 const describeReduxForm = (name, structure, combineReducers, expect) => {
-  const { fromJS, getIn } = structure
+  const { fromJS, getIn, empty } = structure
   const reduxForm = createReduxForm(structure)
   const Field = createField(structure)
   const FieldArray = createFieldArray(structure)
@@ -442,7 +442,8 @@ const describeReduxForm = (name, structure, combineReducers, expect) => {
                 foo: 'bob'
               }
             },
-            registeredFields: [ { name: 'deep.foo', type: 'Field' } ]
+            registeredFields: [ { name: 'deep.foo', type: 'Field' } ],
+            syncErrors: empty
           }
         }
       })
@@ -545,7 +546,8 @@ const describeReduxForm = (name, structure, combineReducers, expect) => {
                 foo: 'bob'
               }
             },
-            registeredFields: [ { name: 'deep.foo', type: 'Field' } ]
+            registeredFields: [ { name: 'deep.foo', type: 'Field' } ],
+            syncErrors: empty
           }
         }
       })
@@ -563,7 +565,8 @@ const describeReduxForm = (name, structure, combineReducers, expect) => {
               deep: {
                 foo: 'bob'
               }
-            }
+            },
+            syncErrors: empty
           }
         }
       })
@@ -1133,7 +1136,8 @@ const describeReduxForm = (name, structure, combineReducers, expect) => {
                 foo: 'bar'
               }
             },
-            registeredFields: [ { name: 'deep.foo', type: 'Field' } ]
+            registeredFields: [ { name: 'deep.foo', type: 'Field' } ],
+            syncErrors: empty
           }
         }
       })
@@ -1167,7 +1171,8 @@ const describeReduxForm = (name, structure, combineReducers, expect) => {
                 }
               },
               registeredFields: [ { name: 'deep.foo', type: 'Field' } ],
-              asyncErrors
+              asyncErrors,
+              syncErrors: empty
             }
           }
         })

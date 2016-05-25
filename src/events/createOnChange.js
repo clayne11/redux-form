@@ -4,14 +4,14 @@ import isReactNative from '../isReactNative'
 const createOnChange = (
   change,
   syncValidate,
-  getAllValues,
+  getAllValuesAndProps,
   name,
   { setIn, empty }) =>
   event => {
     const value = getValue(event, isReactNative)
-    const allValues = getAllValues() || empty
+    const { allValues, props } = getAllValuesAndProps()
     const newAllValues = setIn(allValues, name, value)
-    const allErrors = syncValidate(newAllValues)
+    const allErrors = syncValidate(newAllValues, props) || empty
     change(value, allErrors)
   }
 

@@ -21,7 +21,8 @@ const describeCreateOnChange = (name, structure, expect) => {
     it('should return a function that calls change with name, value, and errors', () => {
       const change = createSpy()
       const errors = fromJS({ bar: 'test' })
-      createOnChange(change, () => errors, noop, 'bar', { setIn: noop, empty })('bar')
+      createOnChange(change, () => errors, () => ({ allValues: empty, props: {} }),
+        'bar', { setIn: noop, empty })('bar')
       expect(change)
         .toHaveBeenCalled()
         .toHaveBeenCalledWith('bar', errors)
