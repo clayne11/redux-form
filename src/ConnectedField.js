@@ -13,7 +13,8 @@ const createConnectedField = ({
   registerField,
   syncValidate,
   unregisterField
-}, { deepEqual, getIn, setIn, empty }, name) => {
+}, structure, name) => {
+  const { deepEqual, getIn, setIn, empty } = structure
 
   const propInitialValue = initialValues && getIn(initialValues, name)
 
@@ -57,7 +58,7 @@ const createConnectedField = ({
     render() {
       const { component, defaultValue, withRef, getAllValuesAndProps, ...rest } = this.props
       const { _reduxForm: { adapter } } = this.context
-      const props = createFieldProps({ getIn, setIn, empty },
+      const props = createFieldProps(structure,
         name,
         rest,
         defaultValue,

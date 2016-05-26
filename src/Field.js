@@ -3,7 +3,7 @@ import invariant from 'invariant'
 import createConnectedField from './ConnectedField'
 import shallowCompare from 'react-addons-shallow-compare'
 
-const createField = ({ deepEqual, getIn, setIn, empty }) => {
+const createField = (structure) => {
 
   class Field extends Component {
     constructor(props, context) {
@@ -11,8 +11,8 @@ const createField = ({ deepEqual, getIn, setIn, empty }) => {
       if (!context._reduxForm) {
         throw new Error('Field must be inside a component decorated with reduxForm()')
       }
-      this.ConnectedField = createConnectedField(context._reduxForm,
-        { deepEqual, getIn, setIn, empty }, props.name)
+      this.ConnectedField =
+        createConnectedField(context._reduxForm, structure, props.name)
     }
 
     shouldComponentUpdate(nextProps) {
@@ -23,8 +23,7 @@ const createField = ({ deepEqual, getIn, setIn, empty }) => {
       if (this.props.name !== nextProps.name) {
         // name changed, regenerate connected field
         this.ConnectedField =
-          createConnectedField(this.context._reduxForm,
-            { deepEqual, getIn, setIn, empty }, nextProps.name)
+          createConnectedField(this.context._reduxForm, structure, nextProps.name)
       }
     }
 

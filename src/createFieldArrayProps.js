@@ -1,9 +1,10 @@
-const createFieldArrayProps = (getIn, size, name,
+const createFieldArrayProps = (structure, name,
   {
     arrayInsert, arrayPop, arrayPush, arrayRemove, arrayShift,
     arraySwap, arrayUnshift, asyncError, dirty, pristine,
     syncError, submitError, value, ...rest
   }) => {
+  const { getIn, size } = structure
   const error = syncError || asyncError || submitError
   const length = size(value)
   return {

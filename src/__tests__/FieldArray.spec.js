@@ -469,8 +469,9 @@ const describeFieldArray = (name, structure, combineReducers, expect) => {
       expect(input.calls[ 1 ].arguments[ 0 ].bar).toBe('baz')
     })
 
-    it.only('should rerender when array sync error appears or disappears', () => {
+    it('should rerender when array sync error appears or disappears', () => {
       if (empty === immutable.empty) {
+        // cannot work for Immutable Lists because you can not set a value under a string key
         return
       }
 

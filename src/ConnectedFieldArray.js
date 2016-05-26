@@ -22,7 +22,8 @@ const createConnectedFieldArray = ({
   registerField,
   syncValidate,
   unregisterField
-}, { deepEqual, empty, getIn, setIn, size }, name) => {
+}, structure, name) => {
+  const { deepEqual, empty, getIn, setIn, size } = structure
 
   const propInitialValue = initialValues && getIn(initialValues, name)
 
@@ -66,8 +67,7 @@ const createConnectedFieldArray = ({
     render() {
       const { component, withRef, ...rest } = this.props
       const props = createFieldArrayProps(
-        getIn,
-        size,
+        structure,
         name,
         rest,
       )

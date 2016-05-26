@@ -96,7 +96,12 @@ const createReducer = structure => {
         result = setIn(result, `fields.${field}.touched`, true)
         result = setIn(result, 'anyTouched', true)
       }
-      result = setIn(result, 'syncErrors', syncErrors)
+
+      if (syncErrors) {
+        result = setIn(result, 'syncErrors', fromJS(syncErrors))
+      } else {
+        result = deleteIn(result, 'syncErrors')
+      }
       return result
     },
     [FOCUS](state, { meta: { field } }) {
