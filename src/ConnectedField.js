@@ -4,20 +4,38 @@ import createFieldProps from './createFieldProps'
 import { partial, mapValues } from 'lodash'
 
 const createConnectedField = ({
-  syncValidate,
   asyncValidate,
   blur,
   change,
   focus,
   getFormState,
-  initialValues
+  initialValues,
+  registerField,
+  syncValidate,
+  unregisterField
 }, { deepEqual, getIn, setIn, empty }, name) => {
 
   const propInitialValue = initialValues && getIn(initialValues, name)
 
   class ConnectedField extends Component {
+    componentWillMount() {
+      const {
+        getAllValuesAndProps,
+        name,
+        value
+      } = this.props
+      const { allValues, props } = getAllValuesAndProps()
+      const newAllValues = setIn(allValues, name, value)
+      const syncErrors = syncValidate && syncValidate(newAllValues, props) || empty
+      registerField(name, 'Field', syncErrors)
+    }
+
     shouldComponentUpdate(nextProps) {
       return !deepEqual(this.props, nextProps)
+    }
+
+    componentWillUnmount() {
+      unregisterField(this.props.name)
     }
 
     get dirty() {
@@ -85,17 +103,17 @@ const createConnectedField = ({
       const initial = getIn(getFormState(state), `initial.${name}`) || propInitialValue
       const value = getIn(getFormState(state), `values.${name}`)
       const pristine = value === initial
-      let syncError = getIn(getFormState(state), `syncErrors.${name}`);
+      let syncError = getIn(getFormState(state), `syncErrors.${name}`)
       syncError = syncError && getIn(syncError, '_error') ?
         getIn(syncError, '_error') : syncError
       return {
-        syncError,
         asyncError: getIn(getFormState(state), `asyncErrors.${name}`),
         asyncValidating: getIn(getFormState(state), 'asyncValidating') === name,
         dirty: !pristine,
         pristine,
         state: getIn(getFormState(state), `fields.${name}`),
         submitError: getIn(getFormState(state), `submitErrors.${name}`),
+        syncError,
         value,
         _value: ownProps.value, // save value passed in (for checkboxes)
         getAllValuesAndProps

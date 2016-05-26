@@ -254,7 +254,7 @@ const describeActions = (name, structure) => {
     })
 
     it('should create registerField action', () => {
-      expect(registerField('myForm', 'foo', 'Field'))
+      expect(registerField('myForm', 'foo', 'Field', empty))
         .toEqual({
           type: REGISTER_FIELD,
           meta: {
@@ -263,7 +263,8 @@ const describeActions = (name, structure) => {
           payload: {
             name: 'foo',
             type: 'Field'
-          }
+          },
+          syncErrors: empty
         })
         .toPass(isFSA)
     })

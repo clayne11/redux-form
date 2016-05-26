@@ -115,7 +115,7 @@ const createReducer = structure => {
       result = setIn(result, 'initial', mapData)
       return result
     },
-    [REGISTER_FIELD](state, { payload: { name, type } }) {
+    [REGISTER_FIELD](state, { payload: { name, type, syncErrors } }) {
       let result = state
       const registeredFields = getIn(result, 'registeredFields')
       if (some(registeredFields, (field) => getIn(field, 'name') === name)) {
@@ -124,6 +124,7 @@ const createReducer = structure => {
 
       const mapData = fromJS({ name, type })
       result = setIn(state, 'registeredFields', splice(registeredFields, size(registeredFields), 0, mapData))
+      result = setIn(result, 'syncErrors', syncErrors)
       return result
     },
     [RESET](state) {

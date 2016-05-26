@@ -117,10 +117,9 @@ const describeField = (name, structure, combineReducers, expect) => {
         },
         values: {
           foo: 'bar'
-        },
-        syncErrors: {
-          foo: 'foo error'
         }
+      }, {
+        validate: () => fromJS({ foo: 'foo error' })
       })
       expect(props.error).toBe('foo error')
     })

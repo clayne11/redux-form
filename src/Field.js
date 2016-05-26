@@ -19,10 +19,6 @@ const createField = ({ deepEqual, getIn, setIn, empty }) => {
       return shallowCompare(this, nextProps)
     }
 
-    componentWillMount() {
-      this.context._reduxForm.register(this.name, 'Field')
-    }
-
     componentWillReceiveProps(nextProps) {
       if (this.props.name !== nextProps.name) {
         // name changed, regenerate connected field
@@ -30,10 +26,6 @@ const createField = ({ deepEqual, getIn, setIn, empty }) => {
           createConnectedField(this.context._reduxForm,
             { deepEqual, getIn, setIn, empty }, nextProps.name)
       }
-    }
-
-    componentWillUnmount() {
-      this.context._reduxForm.unregister(this.name)
     }
 
     getRenderedComponent() {

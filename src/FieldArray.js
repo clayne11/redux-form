@@ -19,7 +19,7 @@ const createFieldArray = ({ deepEqual, getIn, size }) => {
     }
 
     componentWillMount() {
-      this.context._reduxForm.register(this.name, 'FieldArray')
+      this.context._reduxForm.registerField(this.name, 'FieldArray')
     }
 
     componentWillReceiveProps(nextProps) {
@@ -31,7 +31,7 @@ const createFieldArray = ({ deepEqual, getIn, size }) => {
     }
 
     componentWillUnmount() {
-      this.context._reduxForm.unregister(this.name)
+      this.context._reduxForm.unregisterField(this.name)
     }
 
     get name() {
