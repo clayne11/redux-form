@@ -4,11 +4,12 @@ const describeRegisterField = (reducer, expect, { fromJS, empty }) => () => {
   it('should create registeredFields if it does not exist and a field', () => {
     const state = reducer(fromJS({
       foo: {}
-    }), registerField('foo', 'bar', 'Field' ))
+    }), registerField('foo', 'bar', 'Field', empty ))
     expect(state)
       .toEqualMap({
         foo: {
-          registeredFields: [ { name: 'bar', type: 'Field' } ]
+          registeredFields: [ { name: 'bar', type: 'Field' } ],
+          syncErrors: empty
         }
       })
   })

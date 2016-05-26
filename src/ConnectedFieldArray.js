@@ -13,20 +13,38 @@ const createConnectedFieldArray = ({
   arraySplice,
   arraySwap,
   arrayUnshift,
-  syncValidate,
   asyncValidate,
   blur,
   change,
   focus,
   getFormState,
-  initialValues
-}, { deepEqual, getIn, size }, name) => {
+  initialValues,
+  registerField,
+  syncValidate,
+  unregisterField
+}, { deepEqual, empty, getIn, setIn, size }, name) => {
 
   const propInitialValue = initialValues && getIn(initialValues, name)
 
   class ConnectedFieldArray extends Component {
+    componentWillMount() {
+      const {
+        getAllValuesAndProps,
+        name,
+        value
+      } = this.props
+      const { allValues, props } = getAllValuesAndProps()
+      const newAllValues = setIn(allValues, name, value)
+      const syncErrors = syncValidate && syncValidate(newAllValues, props) || empty
+      registerField(name, 'FieldArray', syncErrors)
+    }
+
     shouldComponentUpdate(nextProps) {
-      return shallowCompare(this, nextProps)
+      return shallowCompare(this.props, nextProps)
+    }
+
+    componentWillUnmount() {
+      unregisterField(this.props.name)
     }
 
     get dirty() {
@@ -69,6 +87,10 @@ const createConnectedFieldArray = ({
     _reduxForm: PropTypes.object
   }
 
+  let allValues = empty
+  let props
+  const getAllValuesAndProps = () => ({ allValues, props })
+
   const actions = mapValues({
     arrayInsert,
     arrayPop,
@@ -80,7 +102,11 @@ const createConnectedFieldArray = ({
     arrayUnshift
   }, actionCreator => partial(actionCreator, name))
   const connector = connect(
-    state => {
+    (state, ownProps) => {
+      // update allValues so that they can be fetched when a field is changed
+      allValues = getIn(getFormState(state), 'values') || empty
+      props = ownProps
+
       const initial = getIn(getFormState(state), `initial.${name}`) || propInitialValue
       const value = getIn(getFormState(state), `values.${name}`)
       const pristine = deepEqual(value, initial)
@@ -88,6 +114,7 @@ const createConnectedFieldArray = ({
         syncError: getIn(getFormState(state), `syncErrors.${name}._error`),
         asyncError: getIn(getFormState(state), `asyncErrors.${name}._error`),
         dirty: !pristine,
+        getAllValuesAndProps,
         pristine,
         submitError: getIn(getFormState(state), `submitErrors.${name}._error`),
         value

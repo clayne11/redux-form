@@ -262,9 +262,9 @@ const describeActions = (name, structure) => {
           },
           payload: {
             name: 'foo',
+            syncErrors: empty,
             type: 'Field'
-          },
-          syncErrors: empty
+          }
         })
         .toPass(isFSA)
     })

@@ -110,13 +110,13 @@ const createConnectedField = ({
         asyncError: getIn(getFormState(state), `asyncErrors.${name}`),
         asyncValidating: getIn(getFormState(state), 'asyncValidating') === name,
         dirty: !pristine,
+        getAllValuesAndProps,
         pristine,
         state: getIn(getFormState(state), `fields.${name}`),
         submitError: getIn(getFormState(state), `submitErrors.${name}`),
         syncError,
         value,
-        _value: ownProps.value, // save value passed in (for checkboxes)
-        getAllValuesAndProps
+        _value: ownProps.value // save value passed in (for checkboxes)
       }
     },
     actions,

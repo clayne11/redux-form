@@ -3,7 +3,7 @@ import invariant from 'invariant'
 import createConnectedFieldArray from './ConnectedFieldArray'
 import shallowCompare from 'react-addons-shallow-compare'
 
-const createFieldArray = ({ deepEqual, getIn, size }) => {
+const createFieldArray = ({ deepEqual, empty, getIn, setIn, size }) => {
 
   class FieldArray extends Component {
     constructor(props, context) {
@@ -11,27 +11,23 @@ const createFieldArray = ({ deepEqual, getIn, size }) => {
       if (!context._reduxForm) {
         throw new Error('FieldArray must be inside a component decorated with reduxForm()')
       }
-      this.ConnectedFieldArray = createConnectedFieldArray(context._reduxForm, { deepEqual, getIn, size }, props.name)
+      this.ConnectedFieldArray = createConnectedFieldArray(context._reduxForm, {
+        deepEqual, empty, getIn, setIn, size
+      }, props.name)
     }
 
     shouldComponentUpdate(nextProps) {
       return shallowCompare(this, nextProps)
     }
 
-    componentWillMount() {
-      this.context._reduxForm.registerField(this.name, 'FieldArray')
-    }
-
     componentWillReceiveProps(nextProps) {
       if (this.props.name !== nextProps.name) {
         // name changed, regenerate connected field
         this.ConnectedFieldArray =
-          createConnectedFieldArray(this.context._reduxForm, { deepEqual, getIn, size }, nextProps.name)
+          createConnectedFieldArray(this.context._reduxForm, {
+            deepEqual, empty, getIn, setIn, size
+          }, nextProps.name)
       }
-    }
-
-    componentWillUnmount() {
-      this.context._reduxForm.unregisterField(this.name)
     }
 
     get name() {

@@ -49,8 +49,8 @@ const propsToNotUpdateFor = [
   'initialized',
   'initialValues',
   'syncErrors',
-  'values',
-  'registeredFields'
+  'registeredFields',
+  'values'
 ]
 
 const checkSubmit = submit => {
@@ -289,13 +289,14 @@ const createReduxForm =
             const pristine = deepEqual(initial, values)
             const asyncErrors = getIn(formState, 'asyncErrors')
             const submitErrors = getIn(formState, 'submitErrors')
-            const syncErrors = validate && validate(values, props) || {}
-            const hasSyncErrors = plainHasErrors(syncErrors)
+            const syncErrors = getIn(formState, 'syncErrors') || empty
+            const hasSyncErrors = hasErrors(syncErrors)
             const hasAsyncErrors = hasErrors(asyncErrors)
             const hasSubmitErrors = hasErrors(submitErrors)
+            const registeredFields = getIn(formState, 'registeredFields')
             const valid = (
               !hasSyncErrors && !hasAsyncErrors && !hasSubmitErrors &&
-              !some(getIn(formState, 'registeredFields'), ((field) => {
+              !some(registeredFields, ((field) => {
                 return hasError(field, syncErrors, asyncErrors, submitErrors)
               }))
             )
@@ -317,7 +318,7 @@ const createReduxForm =
               syncErrors,
               values,
               valid,
-              registeredFields: getIn(formState, 'registeredFields'),
+              registeredFields,
               syncValidate: validate
             }
           },

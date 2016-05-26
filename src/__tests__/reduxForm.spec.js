@@ -195,15 +195,15 @@ const describeReduxForm = (name, structure, combineReducers, expect) => {
       dispatch(change('testForm', 'foo', 'g'))       // render 1 (now dirty)
       expect(spy.calls.length).toBe(2)
 
-      dispatch(change('testForm', 'foo', 'gi'))      // no render
-      dispatch(change('testForm', 'foo', 'gir'))     // no render
-      dispatch(change('testForm', 'foo', 'gira'))    // no render
-      dispatch(change('testForm', 'foo', 'giraf'))   // no render
-      dispatch(change('testForm', 'foo', 'giraff'))  // render 2 (invalid)
+      dispatch(change('testForm', 'foo', 'gi', empty))      // no render
+      dispatch(change('testForm', 'foo', 'gir', empty))     // no render
+      dispatch(change('testForm', 'foo', 'gira', empty))    // no render
+      dispatch(change('testForm', 'foo', 'giraf', empty))   // no render
+      dispatch(change('testForm', 'foo', 'giraff', fromJS({ foo: 'Too long' })))  // render 2 (invalid)
       expect(spy.calls.length).toBe(3)
-      dispatch(change('testForm', 'foo', 'giraffe')) // no render
+      dispatch(change('testForm', 'foo', 'giraffe', fromJS({ foo: 'Too long' }))) // no render
 
-      dispatch(change('testForm', 'foo', '')) // render 3 (clean/valid)
+      dispatch(change('testForm', 'foo', '', empty)) // render 3 (clean/valid)
       expect(spy.calls.length).toBe(4)
 
       expect(spy).toHaveBeenCalled()
@@ -260,7 +260,8 @@ const describeReduxForm = (name, structure, combineReducers, expect) => {
           testForm: {
             initial: initialValues,
             values: initialValues,
-            registeredFields: [ { name: 'deep.foo', type: 'Field' } ]
+            registeredFields: [ { name: 'deep.foo', type: 'Field' } ],
+            syncErrors: empty
           }
         }
       })
@@ -324,7 +325,8 @@ const describeReduxForm = (name, structure, combineReducers, expect) => {
       expect(store.getState()).toEqualMap({
         form: {
           testForm: {
-            registeredFields: [ { name: 'deep.foo', type: 'Field' } ]
+            registeredFields: [ { name: 'deep.foo', type: 'Field' } ],
+            syncErrors: empty
           }
         }
       })
@@ -412,7 +414,8 @@ const describeReduxForm = (name, structure, combineReducers, expect) => {
       expect(store.getState()).toEqualMap({
         form: {
           testForm: {
-            registeredFields: [ { name: 'deep.foo', type: 'Field' } ]
+            registeredFields: [ { name: 'deep.foo', type: 'Field' } ],
+            syncErrors: empty
           }
         }
       }, 'Form data in Redux did not get destroyed')
@@ -516,7 +519,8 @@ const describeReduxForm = (name, structure, combineReducers, expect) => {
       expect(store.getState()).toEqualMap({
         form: {
           testForm: {
-            registeredFields: [ { name: 'deep.foo', type: 'Field' } ]
+            registeredFields: [ { name: 'deep.foo', type: 'Field' } ],
+            syncErrors: empty
           }
         }
       }, 'Form data in Redux did not get destroyed')
@@ -1049,7 +1053,8 @@ const describeReduxForm = (name, structure, combineReducers, expect) => {
       expect(store.getState()).toEqualMap({
         form: {
           testForm: {
-            registeredFields: [ { name: 'deep.foo', type: 'Field' } ]
+            registeredFields: [ { name: 'deep.foo', type: 'Field' } ],
+            syncErrors: empty
           }
         }
       })
@@ -1109,7 +1114,8 @@ const describeReduxForm = (name, structure, combineReducers, expect) => {
       expect(store.getState()).toEqualMap({
         form: {
           testForm: {
-            registeredFields: [ { name: 'deep.foo', type: 'Field' } ]
+            registeredFields: [ { name: 'deep.foo', type: 'Field' } ],
+            syncErrors: empty
           }
         }
       })
@@ -1220,7 +1226,8 @@ const describeReduxForm = (name, structure, combineReducers, expect) => {
       expect(store.getState()).toEqualMap({
         form: {
           testForm: {
-            registeredFields: [ { name: 'foo', type: 'Field' } ]
+            registeredFields: [ { name: 'foo', type: 'Field' } ],
+            syncErrors: empty
           }
         }
       })
