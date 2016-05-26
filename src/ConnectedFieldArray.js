@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import createFieldArrayProps from './createFieldArrayProps'
 import { partial, mapValues } from 'lodash'
 import shallowCompare from 'react-addons-shallow-compare'
+import getSyncErrors from './getSyncErrors'
 
 const createConnectedFieldArray = ({
   arrayInsert,
@@ -23,7 +24,7 @@ const createConnectedFieldArray = ({
   syncValidate,
   unregisterField
 }, structure, name) => {
-  const { deepEqual, empty, getIn, setIn, size } = structure
+  const { deepEqual, empty, getIn } = structure
 
   const propInitialValue = initialValues && getIn(initialValues, name)
 
@@ -34,9 +35,9 @@ const createConnectedFieldArray = ({
         name,
         value
       } = this.props
-      const { allValues, props } = getAllValuesAndProps()
-      const newAllValues = setIn(allValues, name, value)
-      const syncErrors = syncValidate && syncValidate(newAllValues, props) || empty
+      const syncErrors = getSyncErrors({
+        value, getAllValuesAndProps, name, syncValidate
+      }, structure)
       registerField(name, 'FieldArray', syncErrors)
     }
 
@@ -66,11 +67,7 @@ const createConnectedFieldArray = ({
 
     render() {
       const { component, withRef, ...rest } = this.props
-      const props = createFieldArrayProps(
-        structure,
-        name,
-        rest,
-      )
+      const props = createFieldArrayProps(structure, name, rest)
       if (withRef) {
         props.ref = 'renderedComponent'
       }

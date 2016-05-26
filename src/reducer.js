@@ -129,7 +129,12 @@ const createReducer = structure => {
 
       const mapData = fromJS({ name, type })
       result = setIn(state, 'registeredFields', splice(registeredFields, size(registeredFields), 0, mapData))
-      result = setIn(result, 'syncErrors', syncErrors)
+      
+      if (syncErrors) {
+        result = setIn(result, 'syncErrors', fromJS(syncErrors))
+      } else {
+        result = deleteIn(result, 'syncErrors')
+      }
       return result
     },
     [RESET](state) {

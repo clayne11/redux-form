@@ -1,17 +1,18 @@
 import getValue from './getValue'
 import isReactNative from '../isReactNative'
+import getSyncErrors from '../getSyncErrors'
 
 const createOnChange = (
   change,
   syncValidate,
   getAllValuesAndProps,
   name,
-  { setIn, empty }) =>
+  structure) =>
   event => {
     const value = getValue(event, isReactNative)
-    const { allValues, props } = getAllValuesAndProps()
-    const newAllValues = setIn(allValues, name, value)
-    const syncErrors = syncValidate && syncValidate(newAllValues, props) || empty
+    const syncErrors = getSyncErrors({
+      value, getAllValuesAndProps, name, syncValidate
+    }, structure)
     change(value, syncErrors)
   }
 

@@ -13,7 +13,7 @@ const describeCreateOnChange = (name, structure, expect) => {
 
   describe(name, () => {
     it('should return a function', () => {
-      expect(createOnChange(noop, noop, noop, 'foo', { setIn: noop, empty }))
+      expect(createOnChange(noop, noop, noop, 'foo', structure))
         .toExist()
         .toBeA('function')
     })
@@ -22,7 +22,7 @@ const describeCreateOnChange = (name, structure, expect) => {
       const change = createSpy()
       const errors = fromJS({ bar: 'test' })
       createOnChange(change, () => errors, () => ({ allValues: empty, props: {} }),
-        'bar', { setIn: noop, empty })('bar')
+        'bar', structure)('bar')
       expect(change)
         .toHaveBeenCalled()
         .toHaveBeenCalledWith('bar', errors)

@@ -2,6 +2,7 @@ import { Component, PropTypes, createElement } from 'react'
 import { connect } from 'react-redux'
 import createFieldProps from './createFieldProps'
 import { partial, mapValues } from 'lodash'
+import getSyncErrors from './getSyncErrors'
 
 const createConnectedField = ({
   asyncValidate,
@@ -14,7 +15,7 @@ const createConnectedField = ({
   syncValidate,
   unregisterField
 }, structure, name) => {
-  const { deepEqual, getIn, setIn, empty } = structure
+  const { deepEqual, getIn, empty } = structure
 
   const propInitialValue = initialValues && getIn(initialValues, name)
 
@@ -25,9 +26,9 @@ const createConnectedField = ({
         name,
         value
       } = this.props
-      const { allValues, props } = getAllValuesAndProps()
-      const newAllValues = setIn(allValues, name, value)
-      const syncErrors = syncValidate && syncValidate(newAllValues, props) || empty
+      const syncErrors = getSyncErrors({
+        value, getAllValuesAndProps, name, syncValidate
+      }, structure)
       registerField(name, 'Field', syncErrors)
     }
 

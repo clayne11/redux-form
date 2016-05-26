@@ -260,8 +260,7 @@ const describeReduxForm = (name, structure, combineReducers, expect) => {
           testForm: {
             initial: initialValues,
             values: initialValues,
-            registeredFields: [ { name: 'deep.foo', type: 'Field' } ],
-            syncErrors: empty
+            registeredFields: [ { name: 'deep.foo', type: 'Field' } ]
           }
         }
       })
@@ -325,8 +324,7 @@ const describeReduxForm = (name, structure, combineReducers, expect) => {
       expect(store.getState()).toEqualMap({
         form: {
           testForm: {
-            registeredFields: [ { name: 'deep.foo', type: 'Field' } ],
-            syncErrors: empty
+            registeredFields: [ { name: 'deep.foo', type: 'Field' } ]
           }
         }
       })
@@ -414,8 +412,7 @@ const describeReduxForm = (name, structure, combineReducers, expect) => {
       expect(store.getState()).toEqualMap({
         form: {
           testForm: {
-            registeredFields: [ { name: 'deep.foo', type: 'Field' } ],
-            syncErrors: empty
+            registeredFields: [ { name: 'deep.foo', type: 'Field' } ]
           }
         }
       }, 'Form data in Redux did not get destroyed')
@@ -445,8 +442,7 @@ const describeReduxForm = (name, structure, combineReducers, expect) => {
                 foo: 'bob'
               }
             },
-            registeredFields: [ { name: 'deep.foo', type: 'Field' } ],
-            syncErrors: empty
+            registeredFields: [ { name: 'deep.foo', type: 'Field' } ]
           }
         }
       })
@@ -519,8 +515,7 @@ const describeReduxForm = (name, structure, combineReducers, expect) => {
       expect(store.getState()).toEqualMap({
         form: {
           testForm: {
-            registeredFields: [ { name: 'deep.foo', type: 'Field' } ],
-            syncErrors: empty
+            registeredFields: [ { name: 'deep.foo', type: 'Field' } ]
           }
         }
       }, 'Form data in Redux did not get destroyed')
@@ -550,8 +545,7 @@ const describeReduxForm = (name, structure, combineReducers, expect) => {
                 foo: 'bob'
               }
             },
-            registeredFields: [ { name: 'deep.foo', type: 'Field' } ],
-            syncErrors: empty
+            registeredFields: [ { name: 'deep.foo', type: 'Field' } ]
           }
         }
       })
@@ -569,8 +563,7 @@ const describeReduxForm = (name, structure, combineReducers, expect) => {
               deep: {
                 foo: 'bob'
               }
-            },
-            syncErrors: empty
+            }
           }
         }
       })
@@ -1053,8 +1046,7 @@ const describeReduxForm = (name, structure, combineReducers, expect) => {
       expect(store.getState()).toEqualMap({
         form: {
           testForm: {
-            registeredFields: [ { name: 'deep.foo', type: 'Field' } ],
-            syncErrors: empty
+            registeredFields: [ { name: 'deep.foo', type: 'Field' } ]
           }
         }
       })
@@ -1114,8 +1106,7 @@ const describeReduxForm = (name, structure, combineReducers, expect) => {
       expect(store.getState()).toEqualMap({
         form: {
           testForm: {
-            registeredFields: [ { name: 'deep.foo', type: 'Field' } ],
-            syncErrors: empty
+            registeredFields: [ { name: 'deep.foo', type: 'Field' } ]
           }
         }
       })
@@ -1142,8 +1133,7 @@ const describeReduxForm = (name, structure, combineReducers, expect) => {
                 foo: 'bar'
               }
             },
-            registeredFields: [ { name: 'deep.foo', type: 'Field' } ],
-            syncErrors: empty
+            registeredFields: [ { name: 'deep.foo', type: 'Field' } ]
           }
         }
       })
@@ -1177,8 +1167,7 @@ const describeReduxForm = (name, structure, combineReducers, expect) => {
                 }
               },
               registeredFields: [ { name: 'deep.foo', type: 'Field' } ],
-              asyncErrors,
-              syncErrors: empty
+              asyncErrors
             }
           }
         })
@@ -1226,8 +1215,7 @@ const describeReduxForm = (name, structure, combineReducers, expect) => {
       expect(store.getState()).toEqualMap({
         form: {
           testForm: {
-            registeredFields: [ { name: 'foo', type: 'Field' } ],
-            syncErrors: empty
+            registeredFields: [ { name: 'foo', type: 'Field' } ]
           }
         }
       })
