@@ -41,7 +41,6 @@ const describeCreateFieldProps = (name, structure, expect) => {
         'foo',
         { value: 'bar', change },
         undefined,
-        undefined,
         () => errors,
         () => {},
         () => ({ allValues: empty, props: {} }))
@@ -125,7 +124,7 @@ const describeCreateFieldProps = (name, structure, expect) => {
       expect(visitedResult.visited).toBe(true)
     })
 
-    it('should read sync errors from param', () => {
+    it('should read sync errors from state', () => {
       const noErrorResult = createFieldProps({ getIn, setIn, empty }, 'foo', {
         value: 'bar',
         state: empty
@@ -135,8 +134,9 @@ const describeCreateFieldProps = (name, structure, expect) => {
       expect(noErrorResult.invalid).toBe(false)
       const errorResult = createFieldProps({ getIn, setIn, empty }, 'foo', {
         value: 'bar',
-        state: empty
-      }, 'This is an error')
+        state: empty,
+        syncError: 'This is an error'
+      })
       expect(errorResult.error).toBe('This is an error')
       expect(errorResult.valid).toBe(false)
       expect(errorResult.invalid).toBe(true)
@@ -152,8 +152,9 @@ const describeCreateFieldProps = (name, structure, expect) => {
       expect(noErrorResult.invalid).toBe(false)
       const errorResult = createFieldProps({ getIn, setIn, empty }, 'foo', {
         value: 'bar',
-        state: empty
-      }, 'This is an error')
+        state: empty,
+        asyncError: 'This is an error'
+      })
       expect(errorResult.error).toBe('This is an error')
       expect(errorResult.valid).toBe(false)
       expect(errorResult.invalid).toBe(true)
@@ -188,8 +189,9 @@ const describeCreateFieldProps = (name, structure, expect) => {
       const errorResult = createFieldProps({ getIn, setIn, empty }, 'foo', {
         value: 'bar',
         asyncError: 'async error',
-        submitError: 'submit error'
-      }, 'sync error')
+        submitError: 'submit error',
+        syncError: 'sync error'
+      })
       expect(errorResult.error).toBe('sync error')
       expect(errorResult.valid).toBe(false)
       expect(errorResult.invalid).toBe(true)
@@ -267,7 +269,7 @@ const describeCreateFieldProps = (name, structure, expect) => {
       }
       const result = createFieldProps({ getIn, setIn, empty }, 'foo', {
         state: empty
-      }, undefined, defaultValue)
+      }, defaultValue)
       expect(result.value).toBe(defaultValue)
     })
   })

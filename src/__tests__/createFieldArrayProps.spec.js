@@ -50,9 +50,15 @@ const describeCreateFieldProps = (name, structure, expect) => {
     })
 
     it('should provide errors', () => {
-      expect(createFieldArrayProps(...defaultProps, {}, 'Sync Error').error).toBe('Sync Error')
-      expect(createFieldArrayProps(...defaultProps, {}, 'Sync Error').valid).toBe(false)
-      expect(createFieldArrayProps(...defaultProps, {}, 'Sync Error').invalid).toBe(true)
+      expect(createFieldArrayProps(...defaultProps, {
+        syncError: 'Sync Error'
+      }).error).toBe('Sync Error')
+      expect(createFieldArrayProps(...defaultProps, {
+        syncError: 'Sync Error'
+      }).valid).toBe(false)
+      expect(createFieldArrayProps(...defaultProps, {
+        syncError: 'Sync Error'
+      }).invalid).toBe(true)
       expect(createFieldArrayProps(...defaultProps, {
         asyncError: 'Async Error'
       }).error).toBe('Async Error')
@@ -114,7 +120,7 @@ const describeCreateFieldProps = (name, structure, expect) => {
         .toHaveBeenCalled()
         .toHaveBeenCalledWith(1, 'c')
     })
-    
+
     it('should provide remove', () => {
       const arrayRemove = createSpy()
       const result = createFieldArrayProps(...defaultProps, {
@@ -128,7 +134,7 @@ const describeCreateFieldProps = (name, structure, expect) => {
         .toHaveBeenCalled()
         .toHaveBeenCalledWith(2)
     })
-    
+
     it('should provide unshift', () => {
       const arrayUnshift = createSpy()
       const result = createFieldArrayProps(...defaultProps, {

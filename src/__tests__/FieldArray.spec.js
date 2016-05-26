@@ -149,13 +149,14 @@ const describeFieldArray = (name, structure, combineReducers, expect) => {
       expect(iterate.calls[ 2 ].arguments[ 0 ]).toBe('foo[2]')
     })
 
-    it('should get sync errors from outer reduxForm component', () => {
+    it('should get sync errors from Redux state', () => {
       const props = testProps({
         values: {
           foo: 'bar'
+        },
+        syncErrors: {
+          foo: { _error: 'foo error' }
         }
-      }, {
-        validate: () => ({ foo: { _error: 'foo error' } })
       })
       expect(props.error).toBe('foo error')
     })
@@ -210,7 +211,7 @@ const describeFieldArray = (name, structure, combineReducers, expect) => {
       const stub = TestUtils.findRenderedComponentWithType(dom, FieldArray)
       expect(stub.name).toEqual('foo')
     })
-    
+
     it('should provide value getter', () => {
       const store = makeStore({
         testForm: {
@@ -348,15 +349,15 @@ const describeFieldArray = (name, structure, combineReducers, expect) => {
                 author: 'erikras'
               }
             ]
+          },
+          syncErrors: {
+            foo: [
+              {
+                _error: 'Too awesome!'
+              }
+            ]
           }
         }
-      })
-      const validate = () => ({
-        foo: [
-          {
-            _error: 'Too awesome!'
-          }
-        ]
       })
       class Form extends Component {
         render() {
@@ -378,8 +379,7 @@ const describeFieldArray = (name, structure, combineReducers, expect) => {
         }
       }
       const TestForm = reduxForm({
-        form: 'testForm',
-        validate
+        form: 'testForm'
       })(Form)
       const dom = TestUtils.renderIntoDocument(
         <Provider store={store}>

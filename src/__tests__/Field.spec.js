@@ -110,16 +110,17 @@ const describeField = (name, structure, combineReducers, expect) => {
       expect(props2.asyncValidating).toBe(true)
     })
 
-    it('should get sync errors from outer reduxForm component', () => {
+    it('should get sync errors from Redux state', () => {
       const props = testProps({
         initial: {
           foo: 'bar'
         },
         values: {
           foo: 'bar'
+        },
+        syncErrors: {
+          foo: 'foo error'
         }
-      }, {
-        validate: () => ({ foo: 'foo error' })
       })
       expect(props.error).toBe('foo error')
     })
@@ -248,7 +249,7 @@ const describeField = (name, structure, combineReducers, expect) => {
       const stub = TestUtils.findRenderedComponentWithType(dom, Field)
       expect(stub.dirty).toBe(false)
     })
-    
+
     it('should provide pristine getter that is false when dirty', () => {
       const store = makeStore({
         testForm: {
@@ -323,19 +324,20 @@ const describeField = (name, structure, combineReducers, expect) => {
         testForm: {
           values: {
             foo: [ 'bar' ]
+          },
+          syncErrors: {
+            foo: [ 'bar error' ]
           }
         }
       })
       const input = createSpy(props => <input {...props}/>).andCallThrough()
-      const validate = () => ({ foo: [ 'bar error' ] })
       class Form extends Component {
         render() {
           return <div><Field name="foo[0]" component={input}/></div>
         }
       }
       const TestForm = reduxForm({
-        form: 'testForm',
-        validate
+        form: 'testForm'
       })(Form)
       TestUtils.renderIntoDocument(
         <Provider store={store}>

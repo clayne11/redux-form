@@ -1,9 +1,9 @@
 const createFieldArrayProps = (getIn, size, name,
   {
     arrayInsert, arrayPop, arrayPush, arrayRemove, arrayShift,
-    arraySplice, arraySwap, arrayUnshift, asyncError, dirty, pristine, state,
-    submitError, submitFailed, value, ...rest
-  }, syncError) => {
+    arraySwap, arrayUnshift, asyncError, dirty, pristine,
+    syncError, submitError, value, ...rest
+  }) => {
   const error = syncError || asyncError || submitError
   const length = size(value)
   return {

@@ -2,7 +2,6 @@ import { Component, PropTypes, createElement } from 'react'
 import { connect } from 'react-redux'
 import createFieldProps from './createFieldProps'
 import { partial, mapValues } from 'lodash'
-import plain from './structure/plain'
 
 const createConnectedField = ({
   syncValidate,
@@ -19,14 +18,6 @@ const createConnectedField = ({
   class ConnectedField extends Component {
     shouldComponentUpdate(nextProps) {
       return !deepEqual(this.props, nextProps)
-    }
-
-    get syncError() {
-      const { _reduxForm: { getSyncErrors } } = this.context
-      const error = plain.getIn(getSyncErrors(), name)
-      // Because the error for this field might not be at a level in the error structure where
-      // it can be set directly, it might need to be unwrapped from the _error property
-      return error && error._error ? error._error : error
     }
 
     get dirty() {
@@ -51,7 +42,6 @@ const createConnectedField = ({
       const props = createFieldProps({ getIn, setIn, empty },
         name,
         rest,
-        this.syncError,
         defaultValue,
         syncValidate,
         asyncValidate,
@@ -95,8 +85,11 @@ const createConnectedField = ({
       const initial = getIn(getFormState(state), `initial.${name}`) || propInitialValue
       const value = getIn(getFormState(state), `values.${name}`)
       const pristine = value === initial
+      let syncError = getIn(getFormState(state), `syncErrors.${name}`);
+      syncError = syncError && getIn(syncError, '_error') ?
+        getIn(syncError, '_error') : syncError
       return {
-        syncError: getIn(getFormState(state), `syncErrors.${name}`),
+        syncError,
         asyncError: getIn(getFormState(state), `asyncErrors.${name}`),
         asyncValidating: getIn(getFormState(state), 'asyncValidating') === name,
         dirty: !pristine,
