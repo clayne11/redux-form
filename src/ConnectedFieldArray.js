@@ -18,6 +18,7 @@ const createConnectedFieldArray = ({
   blur,
   change,
   focus,
+  getFormProps,
   getFormState,
   initialValues,
   registerField,
@@ -85,8 +86,7 @@ const createConnectedFieldArray = ({
   }
 
   let allValues = empty
-  let props
-  const getAllValuesAndProps = () => ({ allValues, props })
+  const getAllValuesAndProps = () => ({ allValues, props: getFormProps() })
 
   const actions = mapValues({
     arrayInsert,
@@ -99,10 +99,9 @@ const createConnectedFieldArray = ({
     arrayUnshift
   }, actionCreator => partial(actionCreator, name))
   const connector = connect(
-    (state, ownProps) => {
+    state => {
       // update allValues so that they can be fetched when a field is changed
       allValues = getIn(getFormState(state), 'values') || empty
-      props = ownProps
 
       const initial = getIn(getFormState(state), `initial.${name}`) || propInitialValue
       const value = getIn(getFormState(state), `values.${name}`)

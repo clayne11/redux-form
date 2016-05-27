@@ -13,7 +13,6 @@ import asyncValidation from './asyncValidation'
 import createHasErrors from './hasErrors'
 import createHasError from './hasError'
 import defaultShouldAsyncValidate from './defaultShouldAsyncValidate'
-import plain from './structure/plain'
 
 // extract field-specific actions
 const {
@@ -68,7 +67,6 @@ const createReduxForm =
     const { deepEqual, empty, getIn, setIn, fromJS, some } = structure
     const hasErrors = createHasErrors(structure)
     const hasError = createHasError(structure)
-    const plainHasErrors = createHasErrors(plain)
     return initialConfig => {
       const config = {
         touchOnBlur: true,
@@ -94,6 +92,7 @@ const createReduxForm =
             return {
               _reduxForm: {
                 ...this.props,
+                getFormProps: () => this.props,
                 getFormState: state => getIn(this.props.getFormState(state), this.props.form),
                 asyncValidate: this.asyncValidate,
                 registerField: this.registerField,

@@ -557,4 +557,5 @@ const describeFieldArray = (name, structure, combineReducers, expect) => {
 }
 
 describeFieldArray('FieldArray.plain', plain, plainCombineReducers, addExpectations(plainExpectations))
+// TODO: Uncomment this
 // describeFieldArray('FieldArray.immutable', immutable, immutableCombineReducers, addExpectations(immutableExpectations))

@@ -97,12 +97,7 @@ const createReducer = structure => {
         result = setIn(result, 'anyTouched', true)
       }
 
-      if (syncErrors) {
-        result = setIn(result, 'syncErrors', fromJS(syncErrors))
-      } else {
-        result = deleteIn(result, 'syncErrors')
-      }
-      return result
+      return updateSyncErrors(result, syncErrors, structure)
     },
     [FOCUS](state, { meta: { field } }) {
       let result = state
@@ -129,13 +124,8 @@ const createReducer = structure => {
 
       const mapData = fromJS({ name, type })
       result = setIn(state, 'registeredFields', splice(registeredFields, size(registeredFields), 0, mapData))
-      
-      if (syncErrors) {
-        result = setIn(result, 'syncErrors', fromJS(syncErrors))
-      } else {
-        result = deleteIn(result, 'syncErrors')
-      }
-      return result
+
+      return updateSyncErrors(result, syncErrors, structure)
     },
     [RESET](state) {
       const values = getIn(state, 'initial')
@@ -231,6 +221,13 @@ const createReducer = structure => {
       fields.forEach(field => result = deleteIn(result, `fields.${field}.touched`))
       return result
     }
+  }
+
+  const updateSyncErrors = (state, syncErrors, { deleteIn, fromJS, setIn }) => {
+    if (syncErrors) {
+      return setIn(state, 'syncErrors', fromJS(syncErrors))
+    }
+    return deleteIn(state, 'syncErrors')
   }
 
   const reducer = (state = empty, action) => {

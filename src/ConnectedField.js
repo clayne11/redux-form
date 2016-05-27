@@ -9,6 +9,7 @@ const createConnectedField = ({
   blur,
   change,
   focus,
+  getFormProps,
   getFormState,
   initialValues,
   registerField,
@@ -92,15 +93,13 @@ const createConnectedField = ({
   }
 
   let allValues = empty
-  let props
-  const getAllValuesAndProps = () => ({ allValues, props })
+  const getAllValuesAndProps = () => ({ allValues, props: getFormProps() })
 
   const actions = mapValues({ blur, change, focus }, actionCreator => partial(actionCreator, name))
   const connector = connect(
     (state, ownProps) => {
       // update allValues so that they can be fetched when a field is changed
       allValues = getIn(getFormState(state), 'values') || empty
-      props = ownProps
 
       const initial = getIn(getFormState(state), `initial.${name}`) || propInitialValue
       const value = getIn(getFormState(state), `values.${name}`)
