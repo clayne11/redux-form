@@ -16,38 +16,38 @@ const createReducer = structure => {
       state
   }
   const rootKeys = [ 'values', 'fields', 'submitErrors', 'syncErrors', 'asyncErrors' ]
-  const arraySplice = (state, field, index, removeNum, value) => {
+  const arraySplice = (state, field, index, removeNum, value, syncErrors) => {
     let result = state
     result = doSplice(result, 'values', field, index, removeNum, value, true)
     result = doSplice(result, 'fields', field, index, removeNum, empty)
     result = doSplice(result, 'submitErrors', field, index, removeNum, empty)
-    result = doSplice(result, 'syncErrors', field, index, removeNum, empty)
     result = doSplice(result, 'asyncErrors', field, index, removeNum, empty)
+    result = updateSyncErrors(result, syncErrors, structure)
     return result
   }
 
   const behaviors = {
-    [ARRAY_INSERT](state, { meta: { field, index }, payload }) {
-      return arraySplice(state, field, index, 0, payload)
+    [ARRAY_INSERT](state, { meta: { field, index }, payload: { value, syncErrors } }) {
+      return arraySplice(state, field, index, 0, value, syncErrors)
     },
-    [ARRAY_POP](state, { meta: { field } }) {
+    [ARRAY_POP](state, { meta: { field }, payload: syncErrors }) {
       const array = getIn(state, `values.${field}`)
       const length = array ? size(array) : 0
-      return length ? arraySplice(state, field, length - 1, 1) : state
+      return length ? arraySplice(state, field, length - 1, 1, undefined, syncErrors) : state
     },
-    [ARRAY_PUSH](state, { meta: { field }, payload }) {
+    [ARRAY_PUSH](state, { meta: { field }, payload: { value, syncErrors } }) {
       const array = getIn(state, `values.${field}`)
       const length = array ? size(array) : 0
-      return arraySplice(state, field, length, 0, payload)
+      return arraySplice(state, field, length, 0, value, syncErrors)
     },
-    [ARRAY_REMOVE](state, { meta: { field, index } }) {
-      return arraySplice(state, field, index, 1)
+    [ARRAY_REMOVE](state, { meta: { field, index }, payload: syncErrors }) {
+      return arraySplice(state, field, index, 1, undefined, syncErrors)
     },
-    [ARRAY_SHIFT](state, { meta: { field } }) {
-      return arraySplice(state, field, 0, 1)
+    [ARRAY_SHIFT](state, { meta: { field }, payload: syncErrors }) {
+      return arraySplice(state, field, 0, 1, undefined, syncErrors)
     },
-    [ARRAY_SPLICE](state, { meta: { field, index, removeNum }, payload }) {
-      return arraySplice(state, field, index, removeNum, payload)
+    [ARRAY_SPLICE](state, { meta: { field, index, removeNum }, payload: { value, syncErrors } }) {
+      return arraySplice(state, field, index, removeNum, value, syncErrors)
     },
     [ARRAY_SWAP](state, { meta: { field, indexA, indexB } }) {
       let result = state
@@ -61,8 +61,8 @@ const createReducer = structure => {
       })
       return result
     },
-    [ARRAY_UNSHIFT](state, { meta: { field }, payload }) {
-      return arraySplice(state, field, 0, 0, payload)
+    [ARRAY_UNSHIFT](state, { meta: { field }, payload: { value, syncErrors } }) {
+      return arraySplice(state, field, 0, 0, value, syncErrors)
     },
     [BLUR](state, { meta: { field, touch }, payload }) {
       let result = state
@@ -96,8 +96,8 @@ const createReducer = structure => {
         result = setIn(result, `fields.${field}.touched`, true)
         result = setIn(result, 'anyTouched', true)
       }
-
-      return updateSyncErrors(result, syncErrors, structure)
+      result = updateSyncErrors(result, syncErrors, structure)
+      return result
     },
     [FOCUS](state, { meta: { field } }) {
       let result = state
@@ -121,11 +121,10 @@ const createReducer = structure => {
       if (some(registeredFields, (field) => getIn(field, 'name') === name)) {
         return state
       }
-
       const mapData = fromJS({ name, type })
       result = setIn(state, 'registeredFields', splice(registeredFields, size(registeredFields), 0, mapData))
-
-      return updateSyncErrors(result, syncErrors, structure)
+      result = updateSyncErrors(result, syncErrors, structure)
+      return result
     },
     [RESET](state) {
       const values = getIn(state, 'initial')

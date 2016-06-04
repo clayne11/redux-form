@@ -5,28 +5,29 @@ import {
   STOP_SUBMIT, TOUCH, UNREGISTER_FIELD, UNTOUCH
 } from './actionTypes'
 
-export const arrayInsert = (form, field, index, value) =>
-  ({ type: ARRAY_INSERT, meta: { form, field, index }, payload: value })
+export const arrayInsert = (form, field, index, value, syncErrors) =>
+  ({ type: ARRAY_INSERT, meta: { form, field, index }, payload: { value, syncErrors } })
 
-export const arrayPop = (form, field) =>
-  ({ type: ARRAY_POP, meta: { form, field } })
+export const arrayPop = (form, field, syncErrors) =>
+  ({ type: ARRAY_POP, meta: { form, field }, payload: syncErrors })
 
-export const arrayPush = (form, field, value) =>
-  ({ type: ARRAY_PUSH, meta: { form, field }, payload: value })
+export const arrayPush = (form, field, value, syncErrors) =>
+  ({ type: ARRAY_PUSH, meta: { form, field }, payload: { value, syncErrors } })
 
-export const arrayRemove = (form, field, index) =>
-  ({ type: ARRAY_REMOVE, meta: { form, field, index } })
+export const arrayRemove = (form, field, index, syncErrors) =>
+  ({ type: ARRAY_REMOVE, meta: { form, field, index }, payload: syncErrors })
 
-export const arrayShift = (form, field) =>
-  ({ type: ARRAY_SHIFT, meta: { form, field } })
+export const arrayShift = (form, field, syncErrors) =>
+  ({ type: ARRAY_SHIFT, meta: { form, field }, payload: syncErrors })
 
-export const arraySplice = (form, field, index, removeNum, value) => {
+export const arraySplice = (form, field, index, removeNum, value, syncErrors) => {
   const action = {
     type: ARRAY_SPLICE,
     meta: { form, field, index, removeNum }
   }
+  action.payload = { syncErrors }
   if (value !== undefined) {
-    action.payload = value
+    action.payload.value = value
   }
   return action
 }
@@ -41,8 +42,8 @@ export const arraySwap = (form, field, indexA, indexB) => {
   return { type: ARRAY_SWAP, meta: { form, field, indexA, indexB } }
 }
 
-export const arrayUnshift = (form, field, value) =>
-  ({ type: ARRAY_UNSHIFT, meta: { form, field }, payload: value })
+export const arrayUnshift = (form, field, value, syncErrors) =>
+  ({ type: ARRAY_UNSHIFT, meta: { form, field }, payload: { value, syncErrors } })
 
 export const blur = (form, field, value, touch) =>
   ({ type: BLUR, meta: { form, field, touch }, payload: value })

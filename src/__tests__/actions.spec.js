@@ -21,7 +21,7 @@ expect.extend(expectPredicate)
 const describeActions = (name, structure) => {
   const { empty } = structure
 
-  describe(name, () => {
+  describe.only(name, () => {
 
     it('should create array insert action', () => {
       expect(arrayInsert('myForm', 'myField', 0, 'foo'))
@@ -88,7 +88,7 @@ const describeActions = (name, structure) => {
     })
 
     it('should create array splice action', () => {
-      expect(arraySplice('myForm', 'myField', 1, 1))
+      expect(arraySplice('myForm', 'myField', 1, 1, undefined, empty))
         .toEqual({
           type: ARRAY_SPLICE,
           meta: {
@@ -96,10 +96,13 @@ const describeActions = (name, structure) => {
             field: 'myField',
             index: 1,
             removeNum: 1
+          },
+          payload: {
+            syncErrors: empty
           }
         })
         .toPass(isFSA)
-      expect(arraySplice('myForm', 'myField', 2, 1))
+      expect(arraySplice('myForm', 'myField', 2, 1, undefined, empty))
         .toEqual({
           type: ARRAY_SPLICE,
           meta: {
@@ -107,10 +110,13 @@ const describeActions = (name, structure) => {
             field: 'myField',
             index: 2,
             removeNum: 1
+          },
+          payload: {
+            syncErrors: empty
           }
         })
         .toPass(isFSA)
-      expect(arraySplice('myForm', 'myField', 2, 0, 'foo'))
+      expect(arraySplice('myForm', 'myField', 2, 0, 'foo', empty))
         .toEqual({
           type: ARRAY_SPLICE,
           meta: {
@@ -119,10 +125,13 @@ const describeActions = (name, structure) => {
             index: 2,
             removeNum: 0
           },
-          payload: 'foo'
+          payload: {
+            value: 'foo',
+            syncErrors: empty
+          }
         })
         .toPass(isFSA)
-      expect(arraySplice('myForm', 'myField', 3, 2, { foo: 'bar' }))
+      expect(arraySplice('myForm', 'myField', 3, 2, { foo: 'bar' }, empty))
         .toEqual({
           type: ARRAY_SPLICE,
           meta: {
@@ -131,20 +140,26 @@ const describeActions = (name, structure) => {
             index: 3,
             removeNum: 2
           },
-          payload: { foo: 'bar' }
+          payload: {
+            value: { foo: 'bar' },
+            syncErrors: empty
+          }
         })
         .toPass(isFSA)
     })
 
     it('should create array unshift action', () => {
-      expect(arrayUnshift('myForm', 'myField', 'foo'))
+      expect(arrayUnshift('myForm', 'myField', 'foo', empty))
         .toEqual({
           type: ARRAY_UNSHIFT,
           meta: {
             form: 'myForm',
             field: 'myField'
           },
-          payload: 'foo'
+          payload: {
+            value: 'foo',
+            syncErrors: empty
+          }
         })
         .toPass(isFSA)
     })
