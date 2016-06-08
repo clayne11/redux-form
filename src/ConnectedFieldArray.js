@@ -96,6 +96,7 @@ const createConnectedFieldArray = ({
         dirty: !pristine,
         pristine,
         submitError: getIn(getFormState(state), `submitErrors.${name}._error`),
+        submitting: getIn(getFormState(state), `submitting`),
         value
       }
     },

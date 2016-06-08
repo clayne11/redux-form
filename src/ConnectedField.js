@@ -83,6 +83,7 @@ const createConnectedField = ({
         pristine,
         state: getIn(getFormState(state), `fields.${name}`),
         submitError: getIn(getFormState(state), `submitErrors.${name}`),
+        submitting: getIn(getFormState(state), `submitting`),
         value,
         _value: ownProps.value // save value passed in (for checkboxes)
       }
